@@ -1,5 +1,6 @@
 ---
-alwaysApply: true
+description: When creating pull requests or commiting with git, follow these automated guidelines to ensure consistency and quality.
+alwaysApply: false
 ---
 ---
 Source: .ruler/pr-creation.md
