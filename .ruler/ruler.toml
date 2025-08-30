@@ -2,7 +2,7 @@
 # See https://ai.intellectronica.net/ruler for documentation.
 
 # Default agents to use when --agents is not specified
-default_agents = ["copilot", "claude", "claude-global", "cursor", "aider"]
+default_agents = ["copilot", "claude", "cursor", "aider"]
 
 # --- Agent Specific Configurations ---
 # You can enable/disable agents and override their default output paths here.
@@ -15,6 +15,10 @@ output_path = ".github/copilot-instructions.md"
 [agents.claude]
 enabled = true
 output_path = "CLAUDE.md"
+
+[agents.claude-global]
+enabled = true
+output_path = "~/.claude/CLAUDE.md"
 
 [agents.codex]
 enabled = true
