@@ -2,7 +2,7 @@
 # See https://ai.intellectronica.net/ruler for documentation.
 
 # Default agents to use when --agents is not specified
-default_agents = ["copilot", "claude", "cursor", "aider", "amp", "windsurf", "cline", "gemini-cli", "kilocode"]
+default_agents = ["copilot", "claude", "cursor", "codex", "aider", "amp", "windsurf", "cline", "gemini-cli", "kilocode"]
 
 # --- Agent Specific Configurations ---
 # You can enable/disable agents and override their default output paths here.
