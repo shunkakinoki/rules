@@ -59,8 +59,8 @@ gh pr create \
   - How changes were tested
   - Pre-commit hooks status
 
-  🤖 Generated with [Claude Code](https://claude.ai/code)
-  Co-Authored-By: Claude <noreply@anthropic.com>" \
+  🤖 Generated with Grok
+  Co-Authored-By: Grok <noreply@x.ai>" \
   --base main \
   --head feature-branch-name
 ```
