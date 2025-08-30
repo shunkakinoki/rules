@@ -1,0 +1,20 @@
+
+[mcp_servers.XcodeBuildMCP]
+command = "npx"
+args = ["-y", "xcodebuildmcp@latest"]
+
+[mcp_servers.Serena]
+command = "uv"
+args = ["run", "serena", "mcp"]
+
+[mcp_servers.Linear]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.linear.app/sse"]
+
+[mcp_servers.GitHub]
+command = "npx"
+args = ["-y", "mcp-remote", "https://api.githubcopilot.com/mcp/"]
+
+[mcp_servers.figma-mcp]
+command = "npx"
+args = ["-y", "mcp-remote", "http://127.0.0.1:3845/sse"]

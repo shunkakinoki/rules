@@ -1,0 +1,59 @@
+# Ruler Configuration File for Kintex Project
+# See https://ai.intellectronica.net/ruler for documentation.
+
+# Default agents to use when --agents is not specified
+default_agents = ["copilot", "claude", "cursor", "codex", "aider", "amp", "windsurf", "cline", "gemini-cli", "kilocode", "firebase"]
+
+# --- Agent Specific Configurations ---
+# You can enable/disable agents and override their default output paths here.
+# Use lowercase agent identifiers: amp, copilot, claude, codex, cursor, windsurf, cline, aider, kilocode
+
+[agents.copilot]
+enabled = true
+output_path = ".github/copilot-instructions.md"
+
+[agents.claude]
+enabled = true
+output_path = "CLAUDE.md"
+
+[agents.codex]
+enabled = true
+output_path = "AGENTS.md"
+
+[agents.cursor]
+enabled = true
+output_path = ".cursor/rules/ruler_cursor_instructions.mdc"
+
+[agents.windsurf]
+enabled = false
+output_path = ".windsurf/rules/ruler_windsurf_instructions.md"
+
+[agents.cline]
+enabled = false
+output_path = ".clinerules"
+
+[agents.aider]
+enabled = true
+output_path_instructions = "ruler_aider_instructions.md"
+output_path_config = ".aider.conf.yml"
+
+[agents.firebase]
+enabled = false
+output_path = ".idx/airules.md"
+
+[agents.gemini-cli]
+enabled = true
+
+[agents.kilocode]
+enabled = false
+output_path = ".kilocode/rules/ruler_kilocode_instructions.md"
+
+# --- Global Configuration ---
+[global]
+# MCP merge strategy: 'merge' or 'overwrite' (default: 'merge')
+merge_strategy = "merge"
+
+# --- Global .gitignore Configuration ---
+[gitignore]
+# Enable/disable automatic .gitignore updates (default: true)
+enabled = false

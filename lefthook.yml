@@ -1,0 +1,21 @@
+# EXAMPLE USAGE:
+#
+#   Refer for explanation to following link:
+#   https://lefthook.dev/configuration/
+#
+
+# Pre-commit hook: Format and lint code before committing
+pre-commit:
+  parallel: true
+  commands:
+    format-node:
+      glob: "*.{js,jsx,ts,tsx,json,css,md}"
+      run: pnpm run format
+
+# Pre-push hook: Format code before pushing
+pre-push:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{js,jsx,ts,tsx}"
+      run: pnpm run lint
