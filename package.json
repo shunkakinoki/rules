@@ -1,25 +1,21 @@
 {
-  "name": "@shunkakinoki/rules",
-  "scripts": {
-    "check": "turbo check",
-    "lint": "turbo lint",
-    "format": "turbo format",
-    "prelint": "pnpm run ruler:apply && pnpm run check && pnpm run format",
-    "preformat": "pnpm run biome:format",
-    "precheck": "pnpm run ruler:check && pnpm run biome:check",
-    "biome:check": "pnpm biome check --write .",
-    "biome:format": "pnpm biome format . --write",
-    "ruler:apply": "ruler apply",
-    "ruler:check": "ruler apply --no-gitignore && test -z \"$(git status --porcelain)\" || true",
-    "lefthook:install": "lefthook install",
-    "lefthook:uninstall": "lefthook uninstall",
-    "lefthook:run": "lefthook run"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.0.5",
-    "@intellectronica/ruler": "^0.2.19",
-    "lefthook": "^1.12.3",
-    "turbo": "^2.5.6"
-  },
-  "packageManager": "pnpm@9.15.4"
+	"name": "@shunkakinoki/rules",
+	"scripts": {
+		"check": "pnpm run ruler:check && pnpm run biome:check",
+		"lint": "pnpm run ruler:apply && pnpm run check && pnpm run format",
+		"format": "pnpm run biome:format",
+		"biome:check": "pnpm biome check --write .",
+		"biome:format": "pnpm biome format . --write",
+		"ruler:apply": "ruler apply",
+		"ruler:check": "ruler apply --no-gitignore && test -z \"$(git status --porcelain)\" || true",
+		"lefthook:install": "lefthook install",
+		"lefthook:uninstall": "lefthook uninstall",
+		"lefthook:run": "lefthook run"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.0.5",
+		"@intellectronica/ruler": "^0.2.19",
+		"lefthook": "^1.12.3"
+	},
+	"packageManager": "pnpm@9.15.4"
 }
