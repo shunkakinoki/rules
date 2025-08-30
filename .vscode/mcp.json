@@ -1,43 +1,24 @@
 {
-  "servers": {
-    "XcodeBuildMCP": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "xcodebuildmcp@latest"
-      ]
-    },
-    "Serena": {
-      "command": "uv",
-      "args": [
-        "run",
-        "serena",
-        "mcp"
-      ]
-    },
-    "Linear": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://mcp.linear.app/sse"
-      ]
-    },
-    "GitHub": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://api.githubcopilot.com/mcp/"
-      ]
-    },
-    "figma-mcp": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "http://127.0.0.1:3845/sse"
-      ]
-    }
-  }
+	"servers": {
+		"XcodeBuildMCP": {
+			"command": "npx",
+			"args": ["-y", "xcodebuildmcp@latest"]
+		},
+		"Serena": {
+			"command": "uv",
+			"args": ["run", "serena", "mcp"]
+		},
+		"Linear": {
+			"command": "npx",
+			"args": ["-y", "mcp-remote", "https://mcp.linear.app/sse"]
+		},
+		"GitHub": {
+			"command": "npx",
+			"args": ["-y", "mcp-remote", "https://api.githubcopilot.com/mcp/"]
+		},
+		"figma-mcp": {
+			"command": "npx",
+			"args": ["-y", "mcp-remote", "http://127.0.0.1:3845/sse"]
+		}
+	}
 }
