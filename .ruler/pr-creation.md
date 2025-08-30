@@ -59,8 +59,8 @@ gh pr create \
   - How changes were tested
   - Pre-commit hooks status
 
-  🤖 Generated with Grok
-  Co-Authored-By: Grok <noreply@x.ai>" \
+  🤖 Generated with Codex CLI
+  Co-Authored-By: Codex CLI <noreply@openai.com>" \
   --base main \
   --head feature-branch-name
 ```
@@ -90,6 +90,7 @@ gh pr create \
 # - Grok → xAI → noreply@x.ai
 # - Claude → Anthropic → noreply@anthropic.com
 # - GitHub Copilot → GitHub → noreply@github.com
+# - Codex CLI → OpenAI → noreply@openai.com
 
 # 2. Update all instances in PR templates:
 # - 🤖 Generated with [AI Assistant Name]
@@ -197,8 +198,8 @@ gh pr create \
 - All pre-commit hooks pass
 - Code formatting applied automatically
 
-🤖 Generated with Grok
-Co-Authored-By: Grok <noreply@x.ai>" \
+🤖 Generated with Codex CLI
+Co-Authored-By: Codex CLI <noreply@openai.com>" \
   --base main \
   --head fix-build-dependencies
 ```
