@@ -81,6 +81,33 @@ gh pr create \
 - **Testing**: Verification steps and pre-commit status
 - **Co-authorship**: Include AI attribution footer
 
+### AI Attribution Guidelines
+- **Always use current AI assistant**: Update attribution to match the AI assistant actually used
+- **Update when switching assistants**: Modify both the generation notice and co-authorship email
+- **Standard format**: `🤖 Generated with [AI Name]` followed by `Co-Authored-By: [AI Name] <email>`
+
+#### How to Update AI Attribution:
+```bash
+# 1. Identify current AI assistant and its company
+# Examples:
+# - Grok → xAI → noreply@x.ai
+# - Claude → Anthropic → noreply@anthropic.com
+# - GitHub Copilot → GitHub → noreply@github.com
+
+# 2. Update all instances in PR templates:
+# - 🤖 Generated with [AI Assistant Name]
+# - Co-Authored-By: [AI Assistant Name] <noreply@company-domain>
+
+# 3. Update in these files:
+# - .ruler/pr-creation.md (this file)
+# - Any other PR template files
+# - Documentation examples
+
+# 4. Test the changes:
+# - Run a test PR creation to verify attribution appears correctly
+# - Ensure the email domain is valid and appropriate
+```
+
 ### Labels and Reviewers
 ```bash
 # Add labels after creation
@@ -173,8 +200,8 @@ gh pr create \
 - All pre-commit hooks pass
 - Code formatting applied automatically
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
-Co-Authored-By: Claude <noreply@anthropic.com>" \
+🤖 Generated with Grok
+Co-Authored-By: Grok <noreply@x.ai>" \
   --base main \
   --head fix-build-dependencies
 ```
