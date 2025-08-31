@@ -56,4 +56,4 @@ merge_strategy = "merge"
 # --- Global .gitignore Configuration ---
 [gitignore]
 # Enable/disable automatic .gitignore updates (default: true)
-enabled = false
+enabled = true
