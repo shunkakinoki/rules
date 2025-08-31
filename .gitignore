@@ -165,5 +165,194 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-.turbo
+# AI/ML and Data Files
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib
+*.model
+*.pth
+*.pt
+*.onnx
+*.pb
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Validation and Testing
+*.tmp
+*.log
+test-results/
+test-reports/
+.coverage.*
+coverage-*.xml
+
+# Development Tools
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Backup Files
 *.bak
+*.backup
+*.backup.*
+*~
+
+# Turbo and Build Tools
+.turbo
+.vercel
+.netlify/
+.next/
+.nuxt/
+dist/
+build/
+out/
+
+# Package Managers
+.yarn/cache
+.yarn/install-state.gz
+.pnpm-debug.log*
+.npm-debug.log*
+
+# Environment and Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.secrets/
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.stackdump
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+.tmp/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime Data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage and Reports
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+reports/
+
+# Dependency Directories
+node_modules/
+jspm_packages/
+bower_components/
+
+# Build Outputs
+build/
+dist/
+*.tsbuildinfo
+.web_modules/
+
+# Cache Directories
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL History
+.node_repl_history
+
+# Output Archives
+*.tgz
+*.tar.gz
+*.zip
+
+# Database Files
+*.db
+*.sqlite
+*.sqlite3
+
+# Configuration Backups
+*.bak
+*.backup
+*.orig
+*.old
+
+# AI Assistant Specific
+.aider.conf.yml
+.clinerules
+.mcp.json
+.cursor/
+.gemini/
+.idx/
+.kilocode/
+.windsurf/
+.github/copilot-instructions.md
+*.rules.md
