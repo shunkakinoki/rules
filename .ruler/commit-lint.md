@@ -138,6 +138,8 @@ When committing files, AI agents must:
 3. **Manual Fixes**: Address any issues that cannot be auto-fixed
 4. **Verify Quality**: Ensure all checks pass before committing
 5. **Test Changes**: Validate that formatting changes don't break functionality
+6. **Solo Authorship**: DO NOT include co-authorship in commit messages - commits should be solo-authored
+7. **PR Attribution**: Include AI attribution in PR descriptions, not commit messages
 
 ## Pre-commit Hook Detection
 
@@ -444,6 +446,8 @@ The system leverages the existing Biome configuration:
 - **Test functionality after formatting changes**
 - **Use descriptive commit messages**
 - **Stage files appropriately**
+- **Solo-authored commits only** - DO NOT include co-authorship in commit messages
+- **PR attribution only** - Include AI attribution in PR descriptions, not commits
 
 ### For Development Workflow
 - **Regular updates**: Keep Biome and dependencies updated
