@@ -25,11 +25,11 @@ enabled = true
 output_path = ".cursor/rules/ruler_cursor_instructions.mdc"
 
 [agents.windsurf]
-enabled = false
+enabled = true
 output_path = ".windsurf/rules/ruler_windsurf_instructions.md"
 
 [agents.cline]
-enabled = false
+enabled = true
 output_path = ".clinerules"
 
 [agents.aider]
@@ -38,14 +38,14 @@ output_path_instructions = "ruler_aider_instructions.md"
 output_path_config = ".aider.conf.yml"
 
 [agents.firebase]
-enabled = false
+enabled = true
 output_path = ".idx/airules.md"
 
 [agents.gemini-cli]
 enabled = true
 
 [agents.kilocode]
-enabled = false
+enabled = true
 output_path = ".kilocode/rules/ruler_kilocode_instructions.md"
 
 # --- Global Configuration ---
@@ -56,4 +56,4 @@ merge_strategy = "merge"
 # --- Global .gitignore Configuration ---
 [gitignore]
 # Enable/disable automatic .gitignore updates (default: true)
-enabled = false
+enabled = true
