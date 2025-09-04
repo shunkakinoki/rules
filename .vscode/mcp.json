@@ -38,6 +38,14 @@
         "mcp-remote",
         "http://127.0.0.1:3845/sse"
       ]
+    },
+    "beeper": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "http://localhost:23373/v0/mcp"
+      ]
     }
   }
 }

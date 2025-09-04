@@ -18,3 +18,7 @@ args = ["-y", "mcp-remote", "https://api.githubcopilot.com/mcp/"]
 [mcp_servers.figma-mcp]
 command = "npx"
 args = ["-y", "mcp-remote", "http://127.0.0.1:3845/sse"]
+
+[mcp_servers.beeper]
+command = "npx"
+args = ["-y", "mcp-remote", "http://localhost:23373/v0/mcp"]

@@ -1,0 +1,11 @@
+{
+  "enabledMcpjsonServers": [
+    "XcodeBuildMCP",
+    "Serena",
+    "Linear",
+    "GitHub",
+    "figma-mcp",
+    "beeper"
+  ],
+  "enableAllProjectMcpServers": true
+}
