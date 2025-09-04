@@ -3,6 +3,7 @@ description: When creating pull requests or commiting with git, follow these aut
 alwaysApply: false
 ---
 ---
+---
 Source: .ruler/commit-lint.md
 ---
 # Commit Linting Guidelines for AI Agents
