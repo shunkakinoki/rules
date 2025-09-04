@@ -768,11 +768,11 @@ Source: .ruler/pr-labeling.md
 ---
 # GitHub PR Labeling Rules
 
-This rule defines how PR labels are applied automatically. It uses the default labels defined in `devops/infra/github/src/labels.ts` and maps Conventional Commit types to GitHub labels.
+This rule defines how PR labels are applied automatically. It uses the default labels defined in `labels.ts` and maps Conventional Commit types to GitHub labels.
 
 ## Default Labels (source of truth)
 
-Names come from `devops/infra/github/src/labels.ts`:
+Names come from `labels.ts`:
 
 - bug
 - documentation
@@ -867,11 +867,11 @@ fi
 ## Usage
 
 - Run the snippet after creating the PR, or integrate it into your local automation.
-- Ensure the label names exist in the repository (they are provisioned via Pulumi from `infra/github/src/labels.ts`).
+- Ensure the label names exist in the repository (they are provisioned via Pulumi from `labels.ts`).
 
 ## Maintenance
 
-- If you change labels in `infra/github/src/labels.ts`, update the list above and (optionally) extend the mapping.
+- If you change labels in `labels.ts`, update the list above and (optionally) extend the mapping.
 - Keep mappings minimal to avoid mislabeling; prefer explicit over implicit where uncertain.
 
 ---
