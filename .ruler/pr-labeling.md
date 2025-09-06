@@ -96,6 +96,65 @@ else
 fi
 ```
 
+### Fish CLI Automation Snippet
+
+The same logic implemented for Fish shell.
+
+```fish
+#!/usr/bin/env fish
+# Requires: gh, jq
+
+# Fetch current PR metadata
+set TITLE (gh pr view --json title --jq .title)
+set AUTHOR (gh pr view --json author --jq .author.login)
+set BRANCH (gh pr view --json headRefName --jq .headRefName)
+set NUMBER (gh pr view --json number --jq .number)
+
+set labels
+
+# Map Conventional Commit type → label
+set TYPE (printf '%s' "$TITLE" | sed -E 's/^([a-zA-Z!]+)(\(.+\))?:.*/\1/' | tr 'A-Z' 'a-z' | sed 's/!$//')
+switch "$TYPE"
+case feat
+  set labels $labels enhancement
+case fix
+  set labels $labels bug
+case docs
+  set labels $labels documentation
+end
+
+# Dependencies-related labels
+if printf '%s' "$TITLE" | grep -qiE '^chore\(deps\)|^build\(deps\)|\bdeps\b|\bdependency\b'
+  set labels $labels dependencies
+end
+
+# Bot-specific labels
+if printf '%s' "$AUTHOR" | grep -qi '^dependabot'
+  set labels $labels dependabot
+end
+if printf '%s' "$AUTHOR" | grep -qi '^renovate'
+  set labels $labels renovate
+end
+
+# Auto-merge request detection
+if printf '%s' "$TITLE" | grep -qi '\[automerge\]'
+  set labels $labels automerge
+end
+if gh pr view --json body --jq .body | grep -qiE '^labels?:.*automerge'
+  set labels $labels automerge
+end
+
+# De-duplicate labels
+set unique_labels (printf '%s\n' $labels | awk 'NF' | awk '!seen[$0]++' | paste -sd, -)
+
+if test -n "$unique_labels"
+  echo "Adding labels to PR #$NUMBER: $unique_labels"
+  gh pr edit "$NUMBER" --add-label "$unique_labels"
+else
+  echo "No labels to add for PR #$NUMBER"
+end
+```
+
 ## Usage
 
 - Run the snippet after creating the PR, or integrate it into your local automation.

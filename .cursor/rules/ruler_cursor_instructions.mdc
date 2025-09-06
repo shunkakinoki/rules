@@ -1,7 +1,5 @@
 ---
-description: When creating pull requests or commiting with git, follow these automated guidelines to ensure consistency and quality.
-alwaysApply: false
----
+alwaysApply: true
 ---
 ---
 Source: .ruler/commit-lint.md
@@ -164,6 +162,18 @@ elif [ -f ".pre-commit-config.yaml" ]; then
 else
   HOOK_SYSTEM="none"
 fi
+```
+
+#### Fish Detection Logic
+
+```fish
+# Check for lefthook (Fish)
+set HOOK_SYSTEM none
+if test -f .lefthook.yml -o -f lefthook.yml
+  set HOOK_SYSTEM lefthook
+else if test -f .pre-commit-config.yaml
+  set HOOK_SYSTEM pre-commit
+end
 ```
 
 ### Lefthook Detection and Usage
@@ -869,6 +879,65 @@ else
 fi
 ```
 
+### Fish CLI Automation Snippet
+
+The same logic implemented for Fish shell.
+
+```fish
+#!/usr/bin/env fish
+# Requires: gh, jq
+
+# Fetch current PR metadata
+set TITLE (gh pr view --json title --jq .title)
+set AUTHOR (gh pr view --json author --jq .author.login)
+set BRANCH (gh pr view --json headRefName --jq .headRefName)
+set NUMBER (gh pr view --json number --jq .number)
+
+set labels
+
+# Map Conventional Commit type → label
+set TYPE (printf '%s' "$TITLE" | sed -E 's/^([a-zA-Z!]+)(\(.+\))?:.*/\1/' | tr 'A-Z' 'a-z' | sed 's/!$//')
+switch "$TYPE"
+case feat
+  set labels $labels enhancement
+case fix
+  set labels $labels bug
+case docs
+  set labels $labels documentation
+end
+
+# Dependencies-related labels
+if printf '%s' "$TITLE" | grep -qiE '^chore\(deps\)|^build\(deps\)|\bdeps\b|\bdependency\b'
+  set labels $labels dependencies
+end
+
+# Bot-specific labels
+if printf '%s' "$AUTHOR" | grep -qi '^dependabot'
+  set labels $labels dependabot
+end
+if printf '%s' "$AUTHOR" | grep -qi '^renovate'
+  set labels $labels renovate
+end
+
+# Auto-merge request detection
+if printf '%s' "$TITLE" | grep -qi '\[automerge\]'
+  set labels $labels automerge
+end
+if gh pr view --json body --jq .body | grep -qiE '^labels?:.*automerge'
+  set labels $labels automerge
+end
+
+# De-duplicate labels
+set unique_labels (printf '%s\n' $labels | awk 'NF' | awk '!seen[$0]++' | paste -sd, -)
+
+if test -n "$unique_labels"
+  echo "Adding labels to PR #$NUMBER: $unique_labels"
+  gh pr edit "$NUMBER" --add-label "$unique_labels"
+else
+  echo "No labels to add for PR #$NUMBER"
+end
+```
+
 ## Usage
 
 - Run the snippet after creating the PR, or integrate it into your local automation.
@@ -878,6 +947,32 @@ fi
 
 - If you change labels in `labels.ts`, update the list above and (optionally) extend the mapping.
 - Keep mappings minimal to avoid mislabeling; prefer explicit over implicit where uncertain.
+
+---
+Source: .ruler/shell-usage.md
+---
+# Shell Usage Standard (Fish)
+
+This repository uses the Fish shell for interactive commands and automation snippets, aligned with the system configuration. Prefer Fish for new scripts and examples.
+
+## Policy
+- Default shell: Fish (`#!/usr/bin/env fish`).
+- Provide Fish snippets for automation examples; keep Bash as optional fallback when helpful.
+- Keep one-file, shell-agnostic command sequences unchanged when they work in both shells.
+
+## Conventions
+- Variables: `set NAME value` (no `=`). Export: `set -x NAME value`.
+- Arrays/lists: `set items a b c`; append: `set items $items d`.
+- Conditionals: `if test -f file; ...; end`; switches: `switch $var; case value; ...; end`.
+- Substitution: `set VAR (command ...)`.
+- PATH: `set -x PATH /new/bin $PATH`.
+
+## Shebangs
+- Use `#!/usr/bin/env fish` for executable scripts.
+
+## Compatibility Notes
+- Avoid `set -euo pipefail`; Fish handles errors differently. Use explicit checks or `status` as needed.
+- When porting Bash snippets, verify quoting and list handling.
 
 ---
 Source: .ruler/tmp.linear-labeling.md

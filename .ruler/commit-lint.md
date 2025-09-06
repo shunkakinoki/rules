@@ -158,6 +158,18 @@ else
 fi
 ```
 
+#### Fish Detection Logic
+
+```fish
+# Check for lefthook (Fish)
+set HOOK_SYSTEM none
+if test -f .lefthook.yml -o -f lefthook.yml
+  set HOOK_SYSTEM lefthook
+else if test -f .pre-commit-config.yaml
+  set HOOK_SYSTEM pre-commit
+end
+```
+
 ### Lefthook Detection and Usage
 
 **Files to check:**
