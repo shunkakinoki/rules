@@ -1,12 +1,12 @@
-# Ruler Configuration File for Kintex Project
+# Ruler Configuration File
 # See https://ai.intellectronica.net/ruler for documentation.
 
 # Default agents to use when --agents is not specified
-default_agents = ["copilot", "claude", "cursor", "codex", "aider", "amp", "windsurf", "cline", "gemini-cli", "kilocode", "firebase"]
+default_agents = ["copilot", "claude", "cursor", "codex", "aider", "amp", "windsurf", "cline", "gemini-cli", "kilocode", "firebase", "crush", "openhands", "junie", "augmentcode", "opencode", "goose", "jules"]
 
 # --- Agent Specific Configurations ---
 # You can enable/disable agents and override their default output paths here.
-# Use lowercase agent identifiers: amp, copilot, claude, codex, cursor, windsurf, cline, aider, kilocode
+# Use lowercase agent identifiers: amp, copilot, claude, codex, cursor, windsurf, cline, aider, kilocode, firebase, gemini-cli, crush, openhands, junie, augmentcode, opencode, goose, jules
 
 [agents.copilot]
 enabled = true
@@ -19,6 +19,10 @@ output_path = "CLAUDE.md"
 [agents.codex]
 enabled = true
 output_path = "AGENTS.md"
+output_path_config = ".codex/config.json"
+
+[agents.codex.mcp]
+enabled = false
 
 [agents.cursor]
 enabled = true
@@ -27,6 +31,9 @@ output_path = ".cursor/rules/ruler_cursor_instructions.mdc"
 [agents.windsurf]
 enabled = true
 output_path = ".windsurf/rules/ruler_windsurf_instructions.md"
+
+[agents.windsurf.mcp]
+enabled = false
 
 [agents.cline]
 enabled = true
@@ -47,6 +54,36 @@ enabled = true
 [agents.kilocode]
 enabled = true
 output_path = ".kilocode/rules/ruler_kilocode_instructions.md"
+
+[agents.crush]
+enabled = true
+output_path = "CRUSH.md"
+
+[agents.amp]
+enabled = true
+
+[agents.openhands]
+enabled = true
+output_path = ".openhands/microagents/repo.md"
+output_path_config = "config.toml"
+
+[agents.junie]
+enabled = true
+output_path = ".junie/guidelines.md"
+
+[agents.augmentcode]
+enabled = true
+output_path = ".augment/rules/ruler_augment_instructions.md"
+
+[agents.opencode]
+enabled = true
+
+[agents.goose]
+enabled = true
+output_path = ".goosehints"
+
+[agents.jules]
+enabled = true
 
 # --- Global Configuration ---
 [global]
