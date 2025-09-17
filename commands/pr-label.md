@@ -1,4 +1,8 @@
-# GitHub PR Labeling Rules
+# /pr-label - Comprehensive PR Labeling Guide
+
+This document outlines the rules and best practices for automatically labeling GitHub Pull Requests (PRs) based on Conventional Commit types and other criteria.
+
+## GitHub PR Labeling Rules
 
 This rule defines how PR labels are applied automatically. It uses the default labels and maps Conventional Commit types to GitHub labels.
 
