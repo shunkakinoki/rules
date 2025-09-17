@@ -1,6 +1,6 @@
-# Commit Linting Guidelines for AI Agents
+# /commit-lint — Commit linting configuration for AI agents
 
-This document outlines the commit linting configuration and guidelines that AI agents must follow when committing files to the Kintex project repository.
+This document outlines the commit linting configuration and guidelines that AI agents must follow when committing files.
 
 ## Overview
 
@@ -131,12 +131,12 @@ The system includes auto-fix commands that attempt to resolve issues automatical
 
 ## Agent Responsibilities
 
-When committing files, AI agents must:
+When contributing code, AI agents must ensure code quality by:
 
-1. **Run Pre-commit Checks**: Execute all pre-commit commands before staging files
+1. **Run Pre-commit Checks**: Execute all pre-commit commands before finalizing changes
 2. **Review Auto-fixes**: Verify that auto-fixes have been applied correctly
 3. **Manual Fixes**: Address any issues that cannot be auto-fixed
-4. **Verify Quality**: Ensure all checks pass before committing
+4. **Verify Quality**: Ensure all checks pass before contributing
 5. **Test Changes**: Validate that formatting changes don't break functionality
 6. **Solo Authorship**: DO NOT include co-authorship in commit messages - commits should be solo-authored
 7. **PR Attribution**: Include AI attribution in PR descriptions, not commit messages
@@ -453,11 +453,10 @@ The system leverages the existing Biome configuration:
 ## Best Practices
 
 ### For AI Agents
-- **Always run linting before committing**
+- **Always run linting before contributing code**
 - **Review auto-fixes for correctness**
 - **Test functionality after formatting changes**
 - **Use descriptive commit messages**
-- **Stage files appropriately**
 - **Solo-authored commits only** - DO NOT include co-authorship in commit messages
 - **PR attribution only** - Include AI attribution in PR descriptions, not commits
 
@@ -520,43 +519,5 @@ feat!: change authentication API interface
 BREAKING CHANGE: The authenticate() method now requires email parameter
 ```
 
-## Example Workflow
-
-```bash
-# Make changes to files
-git add <files>
-
-# Pre-commit hooks run automatically:
-# - Code formatting with Biome
-# - Linting and auto-fixes
-# - Quality checks
-
-# Create commit with conventional format
-git commit -m "feat: add user profile management
-
-- Add profile creation endpoint
-- Implement avatar upload functionality
-- Add profile validation rules
-
-Closes #123"
-
-# Commit-msg hook validates message format
-# Pre-push hooks run comprehensive checks
-
-# Push changes
-git push
-```
-
-### Troubleshooting Commit Messages
-
-```bash
-# If commit message fails validation
-git commit --amend
-# Edit the message in your editor
-# Save and exit
-
-# Or use commit with message flag
-git commit -m "fix: correct validation logic"
-```
 
 This commit linting system ensures that all AI agent contributions maintain the same high standards of code quality, formatting, and commit message conventions as human developers, creating a consistent and maintainable codebase.

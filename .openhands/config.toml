@@ -1,0 +1,29 @@
+[[mcp.stdio_servers]]
+name = "XcodeBuildMCP"
+command = "npx"
+args = [ "-y", "xcodebuildmcp@latest" ]
+
+[[mcp.stdio_servers]]
+name = "Serena"
+command = "uv"
+args = [ "run", "serena", "mcp" ]
+
+[[mcp.stdio_servers]]
+name = "Linear"
+command = "npx"
+args = [ "-y", "mcp-remote", "https://mcp.linear.app/sse" ]
+
+[[mcp.stdio_servers]]
+name = "GitHub"
+command = "npx"
+args = [ "-y", "mcp-remote", "https://api.githubcopilot.com/mcp/" ]
+
+[[mcp.stdio_servers]]
+name = "figma-mcp"
+command = "npx"
+args = [ "-y", "mcp-remote", "http://127.0.0.1:3845/sse" ]
+
+[[mcp.stdio_servers]]
+name = "beeper"
+command = "npx"
+args = [ "-y", "mcp-remote", "http://localhost:23373/v0/mcp" ]
