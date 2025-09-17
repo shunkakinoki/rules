@@ -14,7 +14,7 @@ Use this command when preparing a pull request for the Kintex project. Follow ea
    ```bash
    gh pr create \
      --title "<type>: <concise summary>" \
-     --body "## Changes Made\n- ...\n\n## Technical Details\n- ...\n\n## Testing\n- ...\n\n🤖 Generated with <AI Name>\nCo-Authored-By: <AI Name> <noreply@company.com>" \
+     --body "## Changes Made\n- ...\n\n## Technical Details\n- ...\n\n## Testing\n- ...\n\n🤖 Generated with <AI Name>" \
      --base main \
      --head <branch>
    ```
