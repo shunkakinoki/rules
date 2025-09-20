@@ -4,8 +4,8 @@
 # VARIABLES
 # ====================================================================================
 
-COMMANDS_SRC_DIR := commands
-COMMANDS_TARGET_DIRS := $(HOME)/.cursor/commands $(HOME)/.claude/commands $(HOME)/.codex/commands
+COMMANDS_SRC_DIR := $(dir $(lastword $(MAKEFILE_LIST)))commands
+COMMANDS_TARGET_DIRS := $(HOME)/.cursor/commands $(HOME)/.claude/commands $(HOME)/.codex/commands $(HOME)/.config/opencode/command/
 
 # ====================================================================================
 # COMMANDS
