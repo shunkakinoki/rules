@@ -4,31 +4,17 @@
     "XcodeBuildMCP": {
       "type": "local",
       "enabled": true,
-      "command": [
-        "npx",
-        "-y",
-        "xcodebuildmcp@latest"
-      ]
+      "command": ["npx", "-y", "xcodebuildmcp@latest"]
     },
     "Serena": {
       "type": "local",
       "enabled": true,
-      "command": [
-        "uv",
-        "run",
-        "serena",
-        "mcp"
-      ]
+      "command": ["uv", "run", "serena", "mcp"]
     },
     "Linear": {
       "type": "local",
       "enabled": true,
-      "command": [
-        "npx",
-        "-y",
-        "mcp-remote",
-        "https://mcp.linear.app/sse"
-      ]
+      "command": ["npx", "-y", "mcp-remote", "https://mcp.linear.app/sse"]
     },
     "GitHub": {
       "type": "local",
@@ -40,25 +26,20 @@
         "https://api.githubcopilot.com/mcp/"
       ]
     },
-    "figma-mcp": {
+    "Figma": {
       "type": "local",
       "enabled": true,
-      "command": [
-        "npx",
-        "-y",
-        "mcp-remote",
-        "http://127.0.0.1:3845/sse"
-      ]
+      "command": ["npx", "-y", "mcp-remote", "http://127.0.0.1:3845/sse"]
     },
-    "beeper": {
+    "Beeper": {
       "type": "local",
       "enabled": true,
-      "command": [
-        "npx",
-        "-y",
-        "mcp-remote",
-        "http://localhost:23373/v0/mcp"
-      ]
+      "command": ["npx", "-y", "mcp-remote", "http://localhost:23373/v0/mcp"]
+    },
+    "Codex": {
+      "type": "local",
+      "enabled": true,
+      "command": ["codex", "mcp"]
     }
   }
 }
