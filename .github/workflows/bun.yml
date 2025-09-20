@@ -1,4 +1,4 @@
-name: Node
+name: Bun
 on:
   push:
     branches:
@@ -11,27 +11,25 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.sha }}
   cancel-in-progress: true
 jobs:
-  node-lint:
+  bun-lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
       - name: Install dependencies
-        run: pnpm install
+        run: bun install
       - name: Check
-        run: pnpm run check
+        run: bun run check
       - name: Format
-        run: pnpm run format
+        run: bun run format
       - name: Lint
-        run: pnpm run lint
-  node-check:
+        run: bun run lint
+  bun-check:
     if: always()
     needs:
-      - node-lint
+      - bun-lint
     runs-on: ubuntu-latest
     steps:
       - name: Alls Green

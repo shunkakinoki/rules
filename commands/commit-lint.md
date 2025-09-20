@@ -14,13 +14,13 @@ Install commitlint for commit message validation:
 
 ```bash
 # Install commitlint CLI and conventional config
-pnpm add -D @commitlint/cli @commitlint/config-conventional
+bun add -D @commitlint/cli @commitlint/config-conventional
 
 # Install lefthook for pre-commit hooks
-pnpm add -D lefthook
+bun add -D lefthook
 
 # Initialize lefthook hooks
-pnpm run lefthook:install
+bun run lefthook:install
 ```
 
 ### Required Dependencies
@@ -41,9 +41,9 @@ The commit linting configuration is defined in `ruler.toml` under the `[commit]`
 [commit]
 enabled = true
 pre_commit_commands = [
-  "pnpm run format",    # Format code with Biome
-  "pnpm run lint",      # Run linting and checks
-  "pnpm run check"      # Run all quality checks
+  "bun run format",    # Format code with Biome
+  "bun run lint",      # Run linting and checks
+  "bun run check"      # Run all quality checks
 ]
 ```
 
@@ -93,17 +93,17 @@ Git hooks are managed through `lefthook.yml` with three main stages:
 
 ## Pre-commit Commands
 
-### 1. Code Formatting (`pnpm run format`)
+### 1. Code Formatting (`bun run format`)
 - Uses Biome to format all code files
 - Ensures consistent indentation, spacing, and line breaks
 - Applies project-specific formatting rules
 
-### 2. Linting (`pnpm run lint`)
+### 2. Linting (`bun run lint`)
 - Runs comprehensive linting checks
 - Validates code quality and style
 - Checks for potential bugs and issues
 
-### 3. Quality Checks (`pnpm run check`)
+### 3. Quality Checks (`bun run check`)
 - Runs all automated quality verification
 - Ensures ruler rules are applied
 - Verifies no uncommitted changes remain
@@ -121,11 +121,11 @@ The linting system targets specific file types to optimize performance:
 
 The system includes auto-fix commands that attempt to resolve issues automatically:
 
-- **Biome Format**: `pnpm run biome:format`
+- **Biome Format**: `bun run biome:format`
   - Automatically formats code
   - Fixes spacing and indentation issues
 
-- **Biome Check**: `pnpm run biome:check --write`
+- **Biome Check**: `bun run biome:check --write`
   - Auto-fixes linting violations where possible
   - Applies safe corrections
 
@@ -140,6 +140,52 @@ When contributing code, AI agents must ensure code quality by:
 5. **Test Changes**: Validate that formatting changes don't break functionality
 6. **Solo Authorship**: DO NOT include co-authorship in commit messages - commits should be solo-authored
 7. **PR Attribution**: Include AI attribution in PR descriptions, not commit messages
+
+## Package Manager Detection
+
+AI agents must automatically detect which package manager is being used and adapt their behavior accordingly:
+
+### Detection Logic
+
+```bash
+# Check for package manager
+if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
+  PACKAGE_MANAGER="bun"
+elif [ -f "pnpm-lock.yaml" ]; then
+  PACKAGE_MANAGER="pnpm"
+elif [ -f "yarn.lock" ]; then
+  PACKAGE_MANAGER="yarn"
+elif [ -f "package-lock.json" ]; then
+  PACKAGE_MANAGER="npm"
+else
+  PACKAGE_MANAGER="npm"  # fallback to npm
+fi
+```
+
+#### Fish Detection Logic
+
+```fish
+# Check for package manager (Fish)
+set PACKAGE_MANAGER npm
+if test -f bun.lockb -o -f bun.lock
+  set PACKAGE_MANAGER bun
+else if test -f pnpm-lock.yaml
+  set PACKAGE_MANAGER pnpm
+else if test -f yarn.lock
+  set PACKAGE_MANAGER yarn
+else if test -f package-lock.json
+  set PACKAGE_MANAGER npm
+end
+```
+
+### Package Manager Commands
+
+Based on the detected package manager, use these commands:
+
+- **bun**: `bun add`, `bun run`, `bun install`
+- **pnpm**: `pnpm add`, `pnpm run`, `pnpm install`
+- **yarn**: `yarn add`, `yarn run`, `yarn install`
+- **npm**: `npm install`, `npm run`
 
 ## Pre-commit Hook Detection
 
@@ -224,10 +270,10 @@ git commit -m "feat: add new feature"
 
 **Manual workflow:**
 ```bash
-# Run manual checks
-pnpm run lint
-pnpm run format
-pnpm run check
+# Run manual checks (adapt commands based on detected package manager)
+$PACKAGE_MANAGER run lint
+$PACKAGE_MANAGER run format
+$PACKAGE_MANAGER run check
 
 # Validate commit message format
 echo "feat: add new feature" | npx commitlint
@@ -424,12 +470,12 @@ The system leverages the existing Biome configuration:
 ### Common Issues
 - **Formatting Failures**: Check Biome configuration and file permissions
 - **Linting Errors**: Review error messages and fix manually if auto-fix fails
-- **Command Not Found**: Ensure pnpm and Biome are properly installed
+- **Command Not Found**: Ensure bun and Biome are properly installed
 
 ### Troubleshooting Steps
-1. Verify Biome installation: `pnpm biome --version`
-2. Check configuration: `pnpm run biome:check`
-3. Run manual format: `pnpm run biome:format`
+1. Verify Biome installation: `bun biome --version`
+2. Check configuration: `bun run biome:check`
+3. Run manual format: `bun run biome:format`
 4. Review git status after fixes
 
 ## Quality Standards
