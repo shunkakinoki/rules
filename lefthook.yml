@@ -10,7 +10,7 @@ pre-commit:
   commands:
     format-node:
       glob: "*.{js,jsx,ts,tsx,json,css,md}"
-      run: pnpm run format
+      run: bun run format
 
 # Pre-push hook: Format code before pushing
 pre-push:
@@ -18,4 +18,4 @@ pre-push:
   commands:
     lint:
       glob: "*.{js,jsx,ts,tsx}"
-      run: pnpm run lint
+      run: bun run lint

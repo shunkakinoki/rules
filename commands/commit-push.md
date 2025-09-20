@@ -26,26 +26,61 @@ git push -u origin <branch-name>
 git push
 ```
 
+## Package Manager Detection
+
+Before running any package manager commands, detect which package manager is being used:
+
+```bash
+# Check for package manager
+if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
+  PACKAGE_MANAGER="bun"
+elif [ -f "pnpm-lock.yaml" ]; then
+  PACKAGE_MANAGER="pnpm"
+elif [ -f "yarn.lock" ]; then
+  PACKAGE_MANAGER="yarn"
+elif [ -f "package-lock.json" ]; then
+  PACKAGE_MANAGER="npm"
+else
+  PACKAGE_MANAGER="npm"  # fallback to npm
+fi
+```
+
+### Fish Detection Logic
+
+```fish
+# Check for package manager (Fish)
+set PACKAGE_MANAGER npm
+if test -f bun.lockb -o -f bun.lock
+  set PACKAGE_MANAGER bun
+else if test -f pnpm-lock.yaml
+  set PACKAGE_MANAGER pnpm
+else if test -f yarn.lock
+  set PACKAGE_MANAGER yarn
+else if test -f package-lock.json
+  set PACKAGE_MANAGER npm
+end
+```
+
 ## Pre-commit Quality Checks
 
 Before committing, ensure code quality by running:
 
 ```bash
-# Run formatting with Biome
-pnpm run format
+# Run formatting with Biome (adapt based on detected package manager)
+$PACKAGE_MANAGER run format
 
 # Run linting and checks
-pnpm run lint
+$PACKAGE_MANAGER run lint
 
 # Run all quality checks
-pnpm run check
+$PACKAGE_MANAGER run check
 ```
 
 ### Auto-fix Capabilities
-The system includes auto-fix commands:
+The system includes auto-fix commands (adapt based on detected package manager):
 
-- **Biome Format**: `pnpm run biome:format` - Automatically formats code
-- **Biome Check**: `pnpm run biome:check --write` - Auto-fixes linting violations
+- **Biome Format**: `$PACKAGE_MANAGER run biome:format` - Automatically formats code
+- **Biome Check**: `$PACKAGE_MANAGER run biome:check --write` - Auto-fixes linting violations
 
 ### Quality Verification
 - **Review auto-fixes** for correctness before committing
