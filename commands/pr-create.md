@@ -172,6 +172,8 @@ gh pr close <number>
 
 ### Commit Guidelines
 - **Solo-authored commits only** - DO NOT include co-authorship in commit messages
+- **NO co-authorship** - Never add "Co-Authored-By: Claude" or similar co-authorship attribution in commits
+- **AI name belongs in PR description only** - Use `🤖 Generated with <AI NAME>` format in PR body, not commit messages
 - **Use present tense** in commit messages ("Add feature" not "Added feature")
 - **Keep commits atomic** and focused on single changes
 - **Reference issues** when applicable (`Closes #123`, `Fixes #456`)
@@ -205,7 +207,7 @@ git checkout -b feat-add-user-auth
 git add src/components/Auth/ src/utils/auth.ts
 git status
 
-# 3. Commit with conventional format
+# 3. Commit with conventional format with no co-authorship
 git commit -m "feat: implement user authentication system
 
 - Add login/logout components with form validation
