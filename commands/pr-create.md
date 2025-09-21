@@ -186,10 +186,32 @@ gh pr close <number>
 
 ### Quality Assurance
 - **Ensure all pre-commit hooks pass** before creating PR
-- **Run tests** before creating PR (`uv run pytest` for this project)
+- **Run tests** before creating PR (adapt commands based on detected package manager)
 - **Verify code formatting** (Biome handles this automatically)
 - **Check for breaking changes** and document them clearly
 - **Test manually** for UI/UX changes
+
+#### Package Manager Detection for Testing
+
+Before running tests, detect which package manager is being used:
+
+```bash
+# Check for package manager
+if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
+  PACKAGE_MANAGER="bun"
+elif [ -f "pnpm-lock.yaml" ]; then
+  PACKAGE_MANAGER="pnpm"
+elif [ -f "yarn.lock" ]; then
+  PACKAGE_MANAGER="yarn"
+elif [ -f "package-lock.json" ]; then
+  PACKAGE_MANAGER="npm"
+else
+  PACKAGE_MANAGER="npm"  # fallback to npm
+fi
+
+# Run tests with detected package manager
+$PACKAGE_MANAGER run test
+```
 
 ### CI/CD Integration
 - **PRs automatically trigger** CI pipelines
