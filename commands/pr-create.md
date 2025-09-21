@@ -111,11 +111,14 @@ gh pr create \
 When using `/pr-create auto`, enable automatic squashing of commits using GitHub CLI:
 
 ```bash
-# Enable auto-squashing for cleaner commit history
-gh pr merge <pr-number> --squash --delete-branch=false
+# Enable auto-squashing for cleaner commit history (keeps branch)
+gh pr merge <pr-number> --squash
 
 # Alternative: Enable auto-merge with squashing
 gh pr merge <pr-number> --squash --auto
+
+# To delete branch after merge, add --delete-branch flag
+gh pr merge <pr-number> --squash --delete-branch
 ```
 
 **Note**: Auto-squashing should only be used when:
