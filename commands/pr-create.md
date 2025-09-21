@@ -107,18 +107,14 @@ gh pr create \
   --head feature-branch-name
 ```
 
-### Step 6: Auto Squashing (Optional)
-When using `/pr-create auto`, enable automatic squashing of commits using GitHub CLI:
+### Step 6: Reviews and (Optional) Auto-merge
+Do not merge immediately after creating a PR. First request reviews and wait for required checks to pass. If your repository policy allows it, you may enable auto-merge so GitHub merges the PR once approvals and checks are satisfied.
+
+Variant: `/pr-create auto` — This variant configures the created PR to auto-merge using squash. It never merges immediately; it will merge only after all required approvals and checks pass according to repository rules.
 
 ```bash
-# Enable auto-squashing for cleaner commit history (keeps branch)
-gh pr merge <pr-number> --squash
-
-# Alternative: Enable auto-merge with squashing
+# (Optional) Enable auto-merge with squash; merges later when ready
 gh pr merge <pr-number> --squash --auto
-
-# To delete branch after merge, add --delete-branch flag
-gh pr merge <pr-number> --squash --delete-branch
 ```
 
 **Note**: Auto-squashing should only be used when:
