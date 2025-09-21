@@ -1,5 +1,17 @@
 # /pr-create — Comprehensive PR creation workflow
 
+## OBJECTIVE
+
+This command provides a standardized, comprehensive workflow for creating GitHub Pull Requests with proper formatting, labeling, and quality assurance. The workflow ensures:
+
+- Consistent PR structure and content standards
+- Automated quality checks and validation
+- Proper conventional commit practices
+- Strategic labeling and reviewer assignment
+- Comprehensive testing and documentation requirements
+
+**CRITICAL RULE**: This command is STRICTLY for creating GitHub Pull Requests only. Creating new script files, executables, or automation tools that replicate or extend this functionality is EXPLICITLY PROHIBITED. All PR creation must go through the established `gh pr create` workflow documented here.
+
 Use this command when preparing a pull request. Follow each section before running `gh pr create`.
 
 ## Prerequisites
@@ -94,6 +106,23 @@ gh pr create \
   --base main \
   --head feature-branch-name
 ```
+
+### Step 6: Auto Squashing (Optional)
+When using `/pr-create auto`, enable automatic squashing of commits using GitHub CLI:
+
+```bash
+# Enable auto-squashing for cleaner commit history
+gh pr merge <pr-number> --squash --delete-branch=false
+
+# Alternative: Enable auto-merge with squashing
+gh pr merge <pr-number> --squash --auto
+```
+
+**Note**: Auto-squashing should only be used when:
+- The PR contains multiple small commits that would benefit from consolidation
+- All commits in the PR are related to the same feature/fix
+- The commit history doesn't contain important intermediate states that need preservation
+- Team policy allows squashing (consult repository guidelines)
 
 ## PR Content Standards
 
@@ -267,7 +296,10 @@ gh pr create \
   --base main \
   --head feat-add-user-auth
 
-# 6. Add labels and reviewers
+# 6. Enable auto-squashing (if using /pr-create auto)
+gh pr merge <pr-number> --squash --auto
+
+# 7. Add labels and reviewers
 gh pr edit <pr-number> --add-label enhancement
 gh pr edit <pr-number> --add-reviewer "@org/frontend-team"
 ```
