@@ -17,9 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-      - name: Install dependencies
-        run: bun install
+        uses: shunkakinoki/actions/.github/actions/setup-bun@156beb8dbd9b84135a994da9ea77398d91e33df6
       - name: Check
         run: bun run check
       - name: Format
