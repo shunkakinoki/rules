@@ -5,8 +5,13 @@ args = [ "-y", "xcodebuildmcp@latest" ]
 
 [[mcp.stdio_servers]]
 name = "Serena"
-command = "uv"
-args = [ "run", "serena", "mcp" ]
+command = "uvx"
+args = [
+  "--from",
+  "git+https://github.com/oraios/serena",
+  "serena",
+  "start-mcp-server"
+]
 
 [[mcp.stdio_servers]]
 name = "Linear"
