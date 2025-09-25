@@ -3,10 +3,6 @@
     {
       "name": "rules",
       "path": "/Users/shunkakinoki/ghq/github.com/shunkakinoki/rules"
-    },
-    {
-      "name": "dotfiles",
-      "path": "."
     }
   ],
   "settings": {
