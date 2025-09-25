@@ -40,6 +40,11 @@
       "type": "local",
       "enabled": true,
       "command": ["codex", "mcp"]
+    },
+    "ChromeDevtools": {
+      "type": "local",
+      "enabled": true,
+      "command": ["npx", "chrome-devtools-mcp@latest"]
     }
   }
 }

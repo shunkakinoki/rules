@@ -32,3 +32,8 @@ args = [ "-y", "mcp-remote", "http://localhost:23373/v0/mcp" ]
 name = "Codex"
 command = "codex"
 args = [ "mcp" ]
+
+[[mcp.stdio_servers]]
+name = "ChromeDevtools"
+command = "npx"
+args = [ "chrome-devtools-mcp@latest" ]

@@ -28,6 +28,10 @@
       "type": "stdio",
       "command": "codex",
       "args": ["mcp"]
+    },
+    "ChromeDevtools": {
+      "command": "npx",
+      "args": ["chrome-devtools-mcp@latest"]
     }
   }
 }
