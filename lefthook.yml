@@ -8,7 +8,7 @@
 pre-commit:
   parallel: true
   commands:
-    format-node:
+    format-bun:
       glob: "*.{js,jsx,ts,tsx,json,css,md}"
       run: bun run format
 
