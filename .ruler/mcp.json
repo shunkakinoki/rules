@@ -5,8 +5,13 @@
       "args": ["-y", "xcodebuildmcp@latest"]
     },
     "Serena": {
-      "command": "uv",
-      "args": ["run", "serena", "mcp"]
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server"
+      ]
     },
     "Linear": {
       "command": "npx",
