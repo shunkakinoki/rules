@@ -42,3 +42,8 @@ args = [ "mcp" ]
 name = "ChromeDevtools"
 command = "npx"
 args = [ "chrome-devtools-mcp@latest" ]
+
+[[mcp.stdio_servers]]
+name = "Context7"
+command = "npx"
+args = [ "-y", "@upstash/context7-mcp@latest" ]
