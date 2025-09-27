@@ -19,10 +19,15 @@ Names are defined as:
 - invalid
 - question
 - wontfix
+
+## Other Labels (additional ones defined for `shunkakinoki` repositories)
+
 - dependabot
 - renovate
 - dependencies
 - automerge
+- codex
+- refactor
 
 ## Label Mapping Rules
 
