@@ -10,8 +10,7 @@
     "ruler:check": "ruler apply --no-gitignore && test -z \"$(git status --porcelain)\" || true",
     "lefthook:install": "lefthook install",
     "lefthook:uninstall": "lefthook uninstall",
-    "lefthook:run": "lefthook run",
-    "commands:copy": "cp commands/*.md .ruler/"
+    "lefthook:run": "lefthook run"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.5",

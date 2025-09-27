@@ -1,7 +1,514 @@
 ---
+Source: .ruler/changesets.md
+---
+# /changesets — Automatic changeset management and generation
+
+This command provides intelligent changeset detection and generation for repositories using the Changesets package. It automatically analyzes current changes (git diff, staged files, or PR context) and generates appropriate changeset entries following conventional commit standards.
+
+## Overview
+
+The changeset system intelligently:
+- **Detects changesets setup**: Checks for `.changeset/` directory, `@changesets/cli` dependencies, and configuration files
+- **Analyzes current context**: Examines git diff, staged files, or GitHub PR content to determine change types
+- **Generates changeset entries**: Creates properly formatted changeset files with conventional commit types
+- **Maintains consistency**: Ensures changeset messages align with conventional commit standards
+- **Supports multiple workflows**: Works with git-based changes, PR-based changes, or manual entry
+
+## Changesets Detection
+
+The command automatically detects changesets usage through multiple indicators:
+
+```bash
+# Check for changesets directory
+if [ -d ".changeset" ]; then
+  CHANGESETS_ENABLED=true
+fi
+
+# Check for changesets CLI in dependencies
+if grep -q "@changesets/cli" package.json 2>/dev/null; then
+  CHANGESETS_ENABLED=true
+fi
+
+# Check for changesets configuration
+if [ -f ".changeset/config.json" ]; then
+  CHANGESETS_ENABLED=true
+fi
+```
+
+### Detection Logic (Fish Shell)
+
+```fish
+# Check for changesets setup
+set CHANGESETS_ENABLED false
+
+if test -d .changeset
+  set CHANGESETS_ENABLED true
+end
+
+if grep -q "@changesets/cli" package.json >/dev/null 2>&1
+  set CHANGESETS_ENABLED true
+end
+
+if test -f .changeset/config.json
+  set CHANGESETS_ENABLED true
+end
+```
+
+## Prerequisites
+
+### Changesets Installation
+If changesets is not detected, install it first:
+
+```bash
+# Using npm
+npm install --save-dev @changesets/cli @changesets/changelog-github
+
+# Using yarn
+yarn add -D @changesets/cli @changesets/changelog-github
+
+# Using pnpm
+pnpm add -D @changesets/cli @changesets/changelog-github
+
+# Using bun
+bun add -D @changesets/cli @changesets/changelog-github
+```
+
+### Configuration Setup
+Initialize changesets if not already configured:
+
+```bash
+# Initialize changesets (creates .changeset/config.json)
+npx @changesets/cli init
+
+# Or with bun
+bunx @changesets/cli init
+```
+
+### Required Dependencies
+- `@changesets/cli` - Core changesets functionality
+- `@changesets/changelog-github` - GitHub changelog integration
+- Git repository with proper commit history
+
+## Workflow
+
+### 1. Context Analysis
+The command analyzes the current context to determine changeset requirements:
+
+```bash
+# Analyze current git status
+git status --porcelain
+
+# Check for staged changes
+git diff --cached --name-only
+
+# Get recent commit messages for context
+git log --oneline -5
+```
+
+### 2. Change Type Detection
+Automatically determines the appropriate changeset type:
+
+```fish
+# Function to detect changeset type from changes
+function detect_changeset_type
+    set staged_files (git diff --cached --name-only)
+
+    # Check for breaking changes (major version bump indicators)
+    if string match -q "*BREAKING CHANGE*" (git log --oneline -1)
+        echo "major"
+        return
+    end
+
+    # Check for new features
+    if string match -q "feat:*" (git log --oneline -1)
+        echo "minor"
+        return
+    end
+
+    # Check for bug fixes
+    if string match -q "fix:*" (git log --oneline -1)
+        echo "patch"
+        return
+    end
+
+    # Default to patch for other changes
+    echo "patch"
+end
+```
+
+### 3. Changeset Generation
+Creates changeset entries based on detected changes:
+
+```bash
+# Generate changeset with automatic type detection
+npx @changesets/cli add
+
+# Or with specific bump type
+npx @changesets/cli add --type major
+npx @changesets/cli add --type minor
+npx @changesets/cli add --type patch
+```
+
+### 4. PR-Based Changesets
+For GitHub PR context, automatically extracts information:
+
+```bash
+# Get PR title and body for changeset content
+PR_TITLE=$(gh pr view --json title --jq '.title')
+PR_BODY=$(gh pr view --json body --jq '.body')
+
+# Generate changeset from PR context
+npx @changesets/cli add --message "Update based on PR: $PR_TITLE"
+```
+
+## Automatic Changeset Generation
+
+### Git Diff Analysis
+Analyzes git diff to determine appropriate changeset content:
+
+```fish
+function generate_changeset_from_diff
+    # Get staged changes
+    set changed_files (git diff --cached --name-only)
+
+    # Analyze file types and changes
+    for file in $changed_files
+        switch $file
+            case "*.md"
+                echo "Updated documentation"
+            case "package.json"
+                echo "Updated dependencies"
+            case "src/**/*"
+                echo "Modified source code"
+            case "tests/**/*"
+                echo "Updated tests"
+        end
+    end
+end
+```
+
+### PR Context Analysis
+Extracts changeset information from GitHub PR:
+
+```fish
+function generate_changeset_from_pr
+    set pr_title (gh pr view --json title --jq '.title')
+    set pr_number (gh pr view --json number --jq '.number')
+    set pr_labels (gh pr view --json labels --jq '.labels[].name')
+
+    # Generate changeset message based on PR content
+    echo "Update based on PR #$pr_number: $pr_title"
+
+    # Add labels as context
+    if contains "breaking-change" $pr_labels
+        echo "BREAKING CHANGE: This update includes breaking changes"
+    end
+end
+```
+
+### Manual Changeset Entry
+For manual changeset creation with guided prompts:
+
+```bash
+# Interactive changeset creation
+npx @changesets/cli add
+
+# Answer prompts:
+# - Which packages should have a changeset added? (package name)
+# - What kind of change is this? (major/minor/patch)
+# - Write a summary of the changes
+```
+
+## Changeset Types and Standards
+
+### Version Bump Types
+- **Major**: Breaking changes, API removals, or significant architectural changes
+- **Minor**: New features, enhancements, or backward-compatible additions
+- **Patch**: Bug fixes, security patches, or minor improvements
+
+### Changeset Message Format
+```markdown
+---
+"package-name": major|minor|patch
+---
+
+Summary of changes made
+
+### Technical Details
+- Implementation specifics
+- Migration notes for breaking changes
+- Testing verification steps
+
+### Breaking Changes
+- List of breaking changes if major bump
+- Migration instructions for users
+```
+
+## Best Practices
+
+### Changeset Management
+- **Create changesets for every PR**: Each PR should have a corresponding changeset
+- **Use conventional commit types**: Align changeset types with commit message conventions
+- **Keep messages concise**: Focus on user-facing impact rather than implementation details
+- **Include migration notes**: For breaking changes, provide clear upgrade instructions
+
+### Git Workflow Integration
+```bash
+# Create feature branch
+git checkout -b feat/new-feature
+
+# Make changes and stage them
+git add .
+
+# Generate changeset based on changes
+npx @changesets/cli add
+
+# Commit with conventional message
+git commit -m "feat: add new feature"
+
+# Push branch and create PR
+git push -u origin feat/new-feature
+gh pr create --title "feat: add new feature" --body "..."
+```
+
+### Package-Specific Changesets
+For monorepos with multiple packages:
+
+```bash
+# Add changeset for specific package
+npx @changesets/cli add package-name
+
+# Add changeset for multiple packages
+npx @changesets/cli add package-a package-b
+
+# Add changeset for all packages (default)
+npx @changesets/cli add
+```
+
+## Integration with Other Commands
+
+### Commit Integration
+Works alongside `/commit-lint` and `/commit-push`:
+
+```bash
+# After making changes
+git add .
+
+# Generate changeset
+npx @changesets/cli add
+
+# Commit with conventional format
+git commit -m "feat: add new feature"
+
+# Push changes
+git push
+```
+
+### PR Integration
+Integrates seamlessly with `/pr-create` workflow:
+
+```bash
+# The /pr-create command automatically detects changesets and runs:
+# npx @changesets/cli add
+
+# Then creates PR with reference to changeset
+gh pr create --title "feat: add user authentication system" --body "...
+
+🤖 Generated with <AI NAME>"
+```
+
+**Automatic Integration**: When using `/pr-create`, changeset generation happens automatically in Step 3 if changesets is detected in your repository.
+
+## Advanced Usage
+
+### Batch Changeset Generation
+For multiple related changes:
+
+```bash
+# Create changeset for current changes
+npx @changesets/cli add
+
+# Add additional context
+echo "Additional changes made:" >> .changeset/$(ls .changeset/ | tail -1)
+```
+
+### Changeset Version Management
+```bash
+# Check current version status
+npx @changesets/cli status
+
+# Preview upcoming version changes
+npx @changesets/cli version --dry-run
+
+# Apply version changes
+npx @changesets/cli version
+```
+
+### Custom Changeset Configuration
+```json
+{
+  "changelog": "@changesets/cli/changelog",
+  "commit": "@changesets/cli/commit",
+  "linked": [],
+  "access": "restricted",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}
+```
+
+## Error Handling
+
+### Common Issues
+
+**Changesets not detected:**
+```bash
+# Verify changesets installation
+npx @changesets/cli --version
+
+# Check for .changeset directory
+ls -la .changeset/
+
+# Reinitialize if needed
+npx @changesets/cli init --yes
+```
+
+**Changeset generation fails:**
+```bash
+# Check git status
+git status
+
+# Ensure changes are staged
+git add .
+
+# Retry changeset generation
+npx @changesets/cli add
+```
+
+**Version conflicts:**
+```bash
+# Check for conflicting changesets
+npx @changesets/cli status
+
+# Resolve conflicts manually or
+git checkout HEAD -- .changeset/
+npx @changesets/cli add
+```
+
+### Troubleshooting Commands
+```bash
+# Verify changesets setup
+npx @changesets/cli --help
+
+# Check current changesets
+ls .changeset/
+
+# View changeset content
+cat .changeset/$(ls .changeset/ | head -1)
+
+# Validate changeset format
+npx @changesets/cli status
+```
+
+## CI/CD Integration
+
+### Automated Changeset Validation
+```yaml
+# .github/workflows/changesets.yml
+name: Changesets
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  validate-changesets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npx @changesets/cli status
+```
+
+### Version Publishing
+```yaml
+# .github/workflows/release.yml
+name: Release
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npx @changesets/cli version
+      - run: npm publish
+```
+
+## Examples
+
+### Feature Addition
+```bash
+# After implementing user authentication
+git add src/components/Auth/ src/hooks/useAuth.ts
+npx @changesets/cli add --message "Add user authentication system
+
+- Implement login and logout components
+- Add JWT token management
+- Create authentication context
+- Update protected routes"
+
+git commit -m "feat: add user authentication system"
+```
+
+### Bug Fix
+```bash
+# After fixing login validation
+git add src/utils/validation.ts
+npx @changesets/cli add --type patch --message "Fix login validation error
+
+- Correct email format validation
+- Improve password strength checking
+- Add proper error messaging"
+
+git commit -m "fix: resolve login validation error"
+```
+
+### Breaking Change
+```bash
+# After API redesign
+git add src/api/v2/
+npx @changesets/cli add --type major --message "Redesign authentication API
+
+BREAKING CHANGE: The authenticate() method now requires email parameter
+instead of username. Update all authentication calls accordingly.
+
+### Migration Guide
+- Replace username parameter with email
+- Update authentication service calls
+- Modify login form components"
+
+git commit -m "feat!: redesign authentication API"
+```
+
+## Reference
+- Changesets documentation: https://github.com/changesets/changesets
+- Conventional commits: https://www.conventionalcommits.org/
+- GitHub changelog integration: https://github.com/changesets/changelog-github
+
+---
 Source: .ruler/commands.md
 ---
 @commands
+- [/changesets](commands/changesets.md) — Automatic changeset management and generation
 - [/commit-lint](commands/commit-lint.md) — Commit linting configuration for AI agents
 - [/commit-push](commands/commit-push.md) — Conventional commit and push workflow
 - [/issue-create](commands/issue-create.md) — Standard Linear issue checklist
@@ -28,13 +535,13 @@ Install commitlint for commit message validation:
 
 ```bash
 # Install commitlint CLI and conventional config
-pnpm add -D @commitlint/cli @commitlint/config-conventional
+bun add -D @commitlint/cli @commitlint/config-conventional
 
 # Install lefthook for pre-commit hooks
-pnpm add -D lefthook
+bun add -D lefthook
 
 # Initialize lefthook hooks
-pnpm run lefthook:install
+bun run lefthook:install
 ```
 
 ### Required Dependencies
@@ -55,9 +562,9 @@ The commit linting configuration is defined in `ruler.toml` under the `[commit]`
 [commit]
 enabled = true
 pre_commit_commands = [
-  "pnpm run format",    # Format code with Biome
-  "pnpm run lint",      # Run linting and checks
-  "pnpm run check"      # Run all quality checks
+  "bun run format",    # Format code with Biome
+  "bun run lint",      # Run linting and checks
+  "bun run check"      # Run all quality checks
 ]
 ```
 
@@ -107,17 +614,17 @@ Git hooks are managed through `lefthook.yml` with three main stages:
 
 ## Pre-commit Commands
 
-### 1. Code Formatting (`pnpm run format`)
+### 1. Code Formatting (`bun run format`)
 - Uses Biome to format all code files
 - Ensures consistent indentation, spacing, and line breaks
 - Applies project-specific formatting rules
 
-### 2. Linting (`pnpm run lint`)
+### 2. Linting (`bun run lint`)
 - Runs comprehensive linting checks
 - Validates code quality and style
 - Checks for potential bugs and issues
 
-### 3. Quality Checks (`pnpm run check`)
+### 3. Quality Checks (`bun run check`)
 - Runs all automated quality verification
 - Ensures ruler rules are applied
 - Verifies no uncommitted changes remain
@@ -135,11 +642,11 @@ The linting system targets specific file types to optimize performance:
 
 The system includes auto-fix commands that attempt to resolve issues automatically:
 
-- **Biome Format**: `pnpm run biome:format`
+- **Biome Format**: `bun run biome:format`
   - Automatically formats code
   - Fixes spacing and indentation issues
 
-- **Biome Check**: `pnpm run biome:check --write`
+- **Biome Check**: `bun run biome:check --write`
   - Auto-fixes linting violations where possible
   - Applies safe corrections
 
@@ -154,6 +661,52 @@ When contributing code, AI agents must ensure code quality by:
 5. **Test Changes**: Validate that formatting changes don't break functionality
 6. **Solo Authorship**: DO NOT include co-authorship in commit messages - commits should be solo-authored
 7. **PR Attribution**: Include AI attribution in PR descriptions, not commit messages
+
+## Package Manager Detection
+
+AI agents must automatically detect which package manager is being used and adapt their behavior accordingly:
+
+### Detection Logic
+
+```bash
+# Check for package manager
+if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
+  PACKAGE_MANAGER="bun"
+elif [ -f "pnpm-lock.yaml" ]; then
+  PACKAGE_MANAGER="pnpm"
+elif [ -f "yarn.lock" ]; then
+  PACKAGE_MANAGER="yarn"
+elif [ -f "package-lock.json" ]; then
+  PACKAGE_MANAGER="npm"
+else
+  PACKAGE_MANAGER="npm"  # fallback to npm
+fi
+```
+
+#### Fish Detection Logic
+
+```fish
+# Check for package manager (Fish)
+set PACKAGE_MANAGER npm
+if test -f bun.lockb -o -f bun.lock
+  set PACKAGE_MANAGER bun
+else if test -f pnpm-lock.yaml
+  set PACKAGE_MANAGER pnpm
+else if test -f yarn.lock
+  set PACKAGE_MANAGER yarn
+else if test -f package-lock.json
+  set PACKAGE_MANAGER npm
+end
+```
+
+### Package Manager Commands
+
+Based on the detected package manager, use these commands:
+
+- **bun**: `bun add`, `bun run`, `bun install`
+- **pnpm**: `pnpm add`, `pnpm run`, `pnpm install`
+- **yarn**: `yarn add`, `yarn run`, `yarn install`
+- **npm**: `npm install`, `npm run`
 
 ## Pre-commit Hook Detection
 
@@ -238,10 +791,10 @@ git commit -m "feat: add new feature"
 
 **Manual workflow:**
 ```bash
-# Run manual checks
-pnpm run lint
-pnpm run format
-pnpm run check
+# Run manual checks (adapt commands based on detected package manager)
+$PACKAGE_MANAGER run lint
+$PACKAGE_MANAGER run format
+$PACKAGE_MANAGER run check
 
 # Validate commit message format
 echo "feat: add new feature" | npx commitlint
@@ -438,12 +991,12 @@ The system leverages the existing Biome configuration:
 ### Common Issues
 - **Formatting Failures**: Check Biome configuration and file permissions
 - **Linting Errors**: Review error messages and fix manually if auto-fix fails
-- **Command Not Found**: Ensure pnpm and Biome are properly installed
+- **Command Not Found**: Ensure bun and Biome are properly installed
 
 ### Troubleshooting Steps
-1. Verify Biome installation: `pnpm biome --version`
-2. Check configuration: `pnpm run biome:check`
-3. Run manual format: `pnpm run biome:format`
+1. Verify Biome installation: `bun biome --version`
+2. Check configuration: `bun run biome:check`
+3. Run manual format: `bun run biome:format`
 4. Review git status after fixes
 
 ## Quality Standards
@@ -567,26 +1120,61 @@ git push -u origin <branch-name>
 git push
 ```
 
+## Package Manager Detection
+
+Before running any package manager commands, detect which package manager is being used:
+
+```bash
+# Check for package manager
+if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
+  PACKAGE_MANAGER="bun"
+elif [ -f "pnpm-lock.yaml" ]; then
+  PACKAGE_MANAGER="pnpm"
+elif [ -f "yarn.lock" ]; then
+  PACKAGE_MANAGER="yarn"
+elif [ -f "package-lock.json" ]; then
+  PACKAGE_MANAGER="npm"
+else
+  PACKAGE_MANAGER="npm"  # fallback to npm
+fi
+```
+
+### Fish Detection Logic
+
+```fish
+# Check for package manager (Fish)
+set PACKAGE_MANAGER npm
+if test -f bun.lockb -o -f bun.lock
+  set PACKAGE_MANAGER bun
+else if test -f pnpm-lock.yaml
+  set PACKAGE_MANAGER pnpm
+else if test -f yarn.lock
+  set PACKAGE_MANAGER yarn
+else if test -f package-lock.json
+  set PACKAGE_MANAGER npm
+end
+```
+
 ## Pre-commit Quality Checks
 
 Before committing, ensure code quality by running:
 
 ```bash
-# Run formatting with Biome
-pnpm run format
+# Run formatting with Biome (adapt based on detected package manager)
+$PACKAGE_MANAGER run format
 
 # Run linting and checks
-pnpm run lint
+$PACKAGE_MANAGER run lint
 
 # Run all quality checks
-pnpm run check
+$PACKAGE_MANAGER run check
 ```
 
 ### Auto-fix Capabilities
-The system includes auto-fix commands:
+The system includes auto-fix commands (adapt based on detected package manager):
 
-- **Biome Format**: `pnpm run biome:format` - Automatically formats code
-- **Biome Check**: `pnpm run biome:check --write` - Auto-fixes linting violations
+- **Biome Format**: `$PACKAGE_MANAGER run biome:format` - Automatically formats code
+- **Biome Check**: `$PACKAGE_MANAGER run biome:check --write` - Auto-fixes linting violations
 
 ### Quality Verification
 - **Review auto-fixes** for correctness before committing
@@ -763,6 +1351,19 @@ Source: .ruler/pr-create.md
 ---
 # /pr-create — Comprehensive PR creation workflow
 
+## OBJECTIVE
+
+This command provides a standardized, comprehensive workflow for creating GitHub Pull Requests with proper formatting, labeling, and quality assurance. The workflow ensures:
+
+- Consistent PR structure and content standards
+- Automated quality checks and validation
+- Proper conventional commit practices
+- Strategic labeling and reviewer assignment
+- Comprehensive testing and documentation requirements
+- Automatic changeset generation for version management
+
+**CRITICAL RULE**: This command is STRICTLY for creating GitHub Pull Requests only. Creating new script files, executables, or automation tools that replicate or extend this functionality is EXPLICITLY PROHIBITED. All PR creation must go through the established `gh pr create` workflow documented here.
+
 Use this command when preparing a pull request. Follow each section before running `gh pr create`.
 
 ## Prerequisites
@@ -806,7 +1407,22 @@ git checkout existing-feature-branch
 git branch --show-current
 ```
 
-### Step 3: Commit Changes
+### Step 3: Generate Changeset (if applicable)
+```bash
+# Check if repository uses changesets and generate changeset automatically
+if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
+  echo "🔄 Changesets detected - generating changeset entry..."
+
+  # Generate changeset based on current changes
+  npx @changesets/cli add
+
+  echo "✅ Changeset generated successfully"
+else
+  echo "ℹ️  No changesets setup detected - skipping changeset generation"
+fi
+```
+
+### Step 4: Commit Changes
 ```bash
 # Commit with conventional commit format
 git commit -m "feat: add user authentication system
@@ -821,7 +1437,7 @@ Closes #123"
 # Reference: /commit-and-push
 ```
 
-### Step 4: Push Branch
+### Step 5: Push Branch
 ```bash
 # Push and set upstream (first time only)
 git push -u origin feature-branch-name
@@ -830,7 +1446,7 @@ git push -u origin feature-branch-name
 git push
 ```
 
-### Step 5: Create PR via CLI
+### Step 6: Create PR via CLI
 ```bash
 gh pr create \
   --title "feat: add user authentication system" \
@@ -858,6 +1474,106 @@ gh pr create \
   --head feature-branch-name
 ```
 
+### Step 7: Reviews and (Optional) Auto-merge
+Do not merge immediately after creating a PR. First request reviews and wait for required checks to pass. If your repository policy allows it, you may enable auto-merge so GitHub merges the PR once approvals and checks are satisfied.
+
+Variant: `/pr-create auto` — This variant configures the created PR to auto-merge using squash. It never merges immediately; it will merge only after all required approvals and checks pass according to repository rules.
+
+```bash
+# (Optional) Enable auto-merge with squash; merges later when ready
+gh pr merge <pr-number> --squash --auto
+```
+
+**Note**: Auto-squashing should only be used when:
+- The PR contains multiple small commits that would benefit from consolidation
+- All commits in the PR are related to the same feature/fix
+- The commit history doesn't contain important intermediate states that need preservation
+- Team policy allows squashing (consult repository guidelines)
+
+## Auto-Merge Variant Workflow
+
+### When to Use `/pr-create auto`
+Use this variant when:
+- **Repository policy allows auto-merge** with required approvals
+- **PR contains multiple related commits** that should be squashed
+- **All required checks pass** and approvals are expected
+- **You want to reduce manual merge operations**
+
+### Auto-Merge Prerequisites
+- **Branch protection rules** must allow auto-merge
+- **Required status checks** must be configured
+- **Minimum approval requirements** must be met
+- **Repository settings** must enable auto-merge
+
+### Step 7 (Auto Variant): Create PR with Auto-Merge
+```bash
+gh pr create \
+  --title "feat: add user authentication system" \
+  --body "## Changes Made
+- Added login form component with validation
+- Implemented JWT token handling and storage
+- Added user session management utilities
+- Updated routing to protect authenticated routes
+
+## Technical Details
+- Uses React hooks for state management
+- Implements secure token storage in localStorage
+- Adds middleware for route protection
+- Follows existing component patterns and styling
+
+## Testing
+- Verified login/logout flow works correctly
+- All pre-commit hooks pass (Biome formatting, linting)
+- Component tests added for auth utilities
+- Manual testing completed on all major browsers
+- No breaking changes to existing functionality
+
+🤖 Generated with <AI NAME>" \
+  --base main \
+  --head feature-branch-name
+```
+
+### Step 8 (Auto Variant): Enable Auto-Merge
+```bash
+# Enable auto-merge with squash for the created PR
+PR_NUMBER=$(gh pr view --json number --jq '.number')
+gh pr merge $PR_NUMBER --squash --auto
+
+echo "✅ Auto-merge enabled for PR #$PR_NUMBER"
+echo "🔄 PR will merge automatically when:"
+echo "   - All required approvals are received"
+echo "   - All status checks pass"
+echo "   - Branch protection rules are satisfied"
+```
+
+### Auto-Merge Status Monitoring
+```bash
+# Check auto-merge status
+gh pr view <pr-number> --json isInMergeQueue,mergeable,mergeStateStatus
+
+# Monitor merge queue (if using merge queues)
+gh pr view <pr-number> --json mergeQueueEntry
+```
+
+### Auto-Merge Troubleshooting
+```bash
+# Check why auto-merge is blocked
+gh pr view <pr-number> --json reviewDecision,mergeStateStatus
+
+# View detailed merge requirements
+gh pr view <pr-number> --json mergeRequirements
+
+# Manually disable auto-merge if needed
+gh pr merge <pr-number> --auto-merge disable
+```
+
+### Auto-Merge Best Practices
+- **Monitor auto-merge status** regularly until merged
+- **Review merge requirements** before enabling auto-merge
+- **Test the workflow** on non-critical PRs first
+- **Have rollback plan** if auto-merge causes issues
+- **Document auto-merge usage** in team guidelines
+
 ## PR Content Standards
 
 ### Title Format
@@ -878,7 +1594,7 @@ gh pr create \
 - **Placement**: At the end of PR description
 - **Consistency**: Use same attribution across all generated content
 
-## Labeling & Reviewers
+## Step 9: Labeling & Reviewers
 
 ### Automatic Labeling
 After PR creation, add appropriate labels:
@@ -931,10 +1647,12 @@ gh pr edit <number> --title "Updated title"
 gh pr close <number>
 ```
 
-## Best Practices
+## Step 10: Best Practices
 
 ### Commit Guidelines
 - **Solo-authored commits only** - DO NOT include co-authorship in commit messages
+- **NO co-authorship** - Never add "Co-Authored-By: Claude" or similar co-authorship attribution in commits
+- **AI name belongs in PR description only** - Use `🤖 Generated with <AI NAME>` format in PR body, not commit messages
 - **Use present tense** in commit messages ("Add feature" not "Added feature")
 - **Keep commits atomic** and focused on single changes
 - **Reference issues** when applicable (`Closes #123`, `Fixes #456`)
@@ -947,10 +1665,32 @@ gh pr close <number>
 
 ### Quality Assurance
 - **Ensure all pre-commit hooks pass** before creating PR
-- **Run tests** before creating PR (`uv run pytest` for this project)
+- **Run tests** before creating PR (adapt commands based on detected package manager)
 - **Verify code formatting** (Biome handles this automatically)
 - **Check for breaking changes** and document them clearly
 - **Test manually** for UI/UX changes
+
+#### Package Manager Detection for Testing
+
+Before running tests, detect which package manager is being used:
+
+```bash
+# Check for package manager
+if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
+  PACKAGE_MANAGER="bun"
+elif [ -f "pnpm-lock.yaml" ]; then
+  PACKAGE_MANAGER="pnpm"
+elif [ -f "yarn.lock" ]; then
+  PACKAGE_MANAGER="yarn"
+elif [ -f "package-lock.json" ]; then
+  PACKAGE_MANAGER="npm"
+else
+  PACKAGE_MANAGER="npm"  # fallback to npm
+fi
+
+# Run tests with detected package manager
+$PACKAGE_MANAGER run test
+```
 
 ### CI/CD Integration
 - **PRs automatically trigger** CI pipelines
@@ -968,7 +1708,13 @@ git checkout -b feat-add-user-auth
 git add src/components/Auth/ src/utils/auth.ts
 git status
 
-# 3. Commit with conventional format
+# 3. Generate changeset (if changesets is configured)
+if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
+  echo "🔄 Generating changeset..."
+  npx @changesets/cli add
+fi
+
+# 4. Commit with conventional format with no co-authorship
 git commit -m "feat: implement user authentication system
 
 - Add login/logout components with form validation
@@ -978,10 +1724,10 @@ git commit -m "feat: implement user authentication system
 
 Closes #123"
 
-# 4. Push to remote
+# 5. Push to remote
 git push -u origin feat-add-user-auth
 
-# 5. Create PR with comprehensive description
+# 6. Create PR with comprehensive description
 gh pr create \
   --title "feat: implement user authentication system" \
   --body "## Changes Made
@@ -1006,19 +1752,24 @@ gh pr create \
   --base main \
   --head feat-add-user-auth
 
-# 6. Add labels and reviewers
+# 7. Enable auto-squashing (if using /pr-create auto)
+gh pr merge <pr-number> --squash --auto
+
+# 8. Add labels and reviewers
 gh pr edit <pr-number> --add-label enhancement
 gh pr edit <pr-number> --add-reviewer "@org/frontend-team"
 ```
 
 ## Integration with Other Commands
 
+- **Changeset management**: Use `/changesets` for automatic changeset generation and management
 - **Commit workflow**: Use `/commit-and-push` for guided conventional commits
 - **Code quality**: Reference `.ruler/commit-lint.md` for detailed standards
 - **PR labeling**: Use `/pr-labeling` for automated label management
 
 ## Reference
 - Full policy: `.ruler/pr-creation.md` in this repository
+- Changeset management: `/changesets`
 - Commit standards: `/commit-and-push`
 - Labeling automation: `/pr-labeling`
 
@@ -1100,6 +1851,191 @@ pnpm run ruler:check
 - If `pnpm run ruler:check` reports a dirty tree, run `git status --short` to see which files still differ.
 - For merge conflicts in generated files, resolve them in the source `.ruler/` Markdown first, re-run `/ruler-apply`, then commit the regenerated outputs.
 - When `.gitignore` changes unexpectedly, confirm `[gitignore].enabled` in `.ruler/ruler.toml` matches the desired setting before re-running the command.
+
+---
+Source: .ruler/serena.md
+---
+---
+allowed-tools: Read, Glob, Grep, Edit, MultiEdit, Write, Bash, TodoWrite, mcp__serena__check_onboarding_performed, mcp__serena__delete_memory, mcp__serena__find_file, mcp__serena__find_referencing_symbols, mcp__serena__find_symbol, mcp__serena__get_symbols_overview, mcp__serena__insert_after_symbol, mcp__serena__insert_before_symbol, mcp__serena__list_dir, mcp__serena__list_memories, mcp__serena__onboarding, mcp__serena__read_memory, mcp__serena__remove_project, mcp__serena__replace_regex, mcp__serena__replace_symbol_body, mcp__serena__restart_language_server, mcp__serena__search_for_pattern, mcp__serena__switch_modes, mcp__serena__think_about_collected_information, mcp__serena__think_about_task_adherence, mcp__serena__think_about_whether_you_are_done, mcp__serena__write_memory, mcp__context7__resolve-library-id, mcp__context7__get-library-docs
+description: Token-efficient Serena MCP command for structured app development and problem-solving
+---
+
+From: https://zenn.dev/sc30gsw/articles/ff81891959aaef
+Thank you to @sc30gsw for the inspiration!
+
+## Quick Reference
+
+```bash
+/serena <problem> [options]           # Basic usage
+/serena debug "memory leak in prod"   # Debug pattern (5-8 thoughts)
+/serena design "auth system"          # Design pattern (8-12 thoughts)  
+/serena review "optimize this code"   # Review pattern (4-7 thoughts)
+/serena implement "add feature X"     # Implementation (6-10 thoughts)
+```
+
+## Options
+
+| Option | Description | Usage | Use Case |
+|--------|-------------|-------|----------|
+| `-q` | Quick mode (3-5 thoughts/steps) | `/serena "fix button" -q` | Simple bugs, minor features |
+| `-d` | Deep mode (10-15 thoughts/steps) | `/serena "architecture design" -d` | Complex systems, major decisions |
+| `-c` | Code-focused analysis | `/serena "optimize performance" -c` | Code review, refactoring |
+| `-s` | Step-by-step implementation | `/serena "build dashboard" -s` | Full feature development |
+| `-v` | Verbose output (show process) | `/serena "debug issue" -v` | Learning, understanding process |
+| `-r` | Include research phase | `/serena "choose framework" -r` | Technology decisions |
+| `-t` | Create implementation todos | `/serena "new feature" -t` | Project management |
+
+## Usage Patterns
+
+### Basic Usage
+```bash
+# Simple problem solving
+/serena "fix login bug"
+
+# Quick feature implementation  
+/serena "add search filter" -q
+
+# Code optimization
+/serena "improve load time" -c
+```
+
+### Advanced Usage
+```bash
+# Complex system design with research
+/serena "design microservices architecture" -d -r -v
+
+# Full feature development with todos
+/serena "implement user dashboard with charts" -s -t -c
+
+# Deep analysis with documentation
+/serena "migrate to new framework" -d -r -v --focus=frontend
+```
+
+## Context (Auto-gathered)
+- Project files: !`find . -maxdepth 2 -name "package.json" -o -name "*.config.*" | head -5 2>/dev/null || echo "No config files"`
+- Git status: !`git status --porcelain 2>/dev/null | head -3 || echo "Not git repo"`
+
+## Core Workflow
+
+### 1. Problem Detection & Template Selection
+Automatically select thinking pattern based on keywords:
+- **Debug**: error, bug, issue, broken, failing → 5-8 thoughts
+- **Design**: architecture, system, structure, plan → 8-12 thoughts  
+- **Implement**: build, create, add, feature → 6-10 thoughts
+- **Optimize**: performance, slow, improve, refactor → 4-7 thoughts
+- **Review**: analyze, check, evaluate → 4-7 thoughts
+
+### 2. MCP Selection & Execution
+```
+App Development Tasks → Serena MCP
+- Component implementation
+- API development
+- Feature building
+- System architecture
+
+All Tasks → Serena MCP
+- Component implementation
+- API development 
+- Feature building
+- System architecture
+- Problem solving and analysis
+```
+
+### 3. Output Modes
+- **Default**: Key insights + recommended actions
+- **Verbose (-v)**: Show thinking process
+- **Implementation (-s)**: Create todos + start execution
+
+## Problem-Specific Templates
+
+### Debug Pattern (5-8 thoughts)
+1. Symptom analysis & reproduction
+2. Error context & environment check  
+3. Root cause hypothesis generation
+4. Evidence gathering & validation
+5. Solution design & risk assessment
+6. Implementation plan
+7. Verification strategy
+8. Prevention measures
+
+### Design Pattern (8-12 thoughts)  
+1. Requirements clarification
+2. Constraints & assumptions
+3. Stakeholder analysis
+4. Architecture options generation
+5. Option evaluation (pros/cons)
+6. Technology selection
+7. Design decisions & tradeoffs
+8. Implementation phases
+9. Risk mitigation
+10. Success metrics
+11. Validation plan
+12. Documentation needs
+
+### Implementation Pattern (6-10 thoughts)
+1. Feature specification & scope
+2. Technical approach selection
+3. Component/module design
+4. Dependencies & integration points
+5. Implementation sequence
+6. Testing strategy
+7. Edge case handling
+8. Performance considerations
+9. Error handling & recovery
+10. Deployment & rollback plan
+
+### Review/Optimize Pattern (4-7 thoughts)
+1. Current state analysis
+2. Bottleneck identification
+3. Improvement opportunities
+4. Solution options & feasibility
+5. Implementation priority
+6. Performance impact estimation
+7. Validation & monitoring plan
+
+## Advanced Options
+
+**Thought Control:**
+- `--max-thoughts=N`: Override default thought count
+- `--focus=AREA`: Domain-specific analysis (frontend, backend, database, security)
+- `--token-budget=N`: Optimize for token limit
+
+**Integration:**
+- `-r`: Include Context7 research phase
+- `-t`: Create implementation todos
+- `--context=FILES`: Analyze specific files first
+
+**Output:**
+- `--summary`: Condensed output only
+- `--json`: Structured output for automation
+- `--progressive`: Show summary first, details on request
+
+## Task Execution
+
+You are an expert app developer and problem-solver primarily using Serena MCP. For each request:
+
+1. **Auto-detect problem type** and select appropriate approach
+2. **Use Serena MCP**:
+   - **All development tasks**: Use Serena MCP tools (https://github.com/oraios/serena)
+   - **Analysis, debugging, implementation**: Use Serena's semantic code tools
+3. **Execute structured approach** with chosen MCP
+4. **Research relevant docs** with Context7 MCP if needed
+5. **Synthesize actionable solution** with specific next steps
+6. **Create implementation todos** if `-s` flag used
+
+**Key Guidelines:**
+- **Primary**: Use Serena MCP tools for all tasks (components, APIs, features, analysis)
+- **Leverage**: Serena's semantic code retrieval and editing capabilities
+- Start with problem analysis, end with concrete actions
+- Balance depth with token efficiency
+- Always provide specific, actionable recommendations
+- Consider security, performance, and maintainability
+
+**Token Efficiency Tips:**
+- Use `-q` for simple problems (saves ~40% tokens)
+- Use `--summary` for overview-only needs  
+- Combine related problems in single session
+- Use `--focus` to avoid irrelevant analysis
 
 ---
 Source: .ruler/shell-usage.md
