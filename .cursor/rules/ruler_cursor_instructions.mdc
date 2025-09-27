@@ -142,14 +142,38 @@ end
 ### 3. Changeset Generation
 Creates changeset entries based on detected changes:
 
+#### Interactive Generation (for manual use)
 ```bash
-# Generate changeset with automatic type detection
+# Generate changeset with automatic type detection (interactive)
 npx @changesets/cli add
 
-# Or with specific bump type
+# Or with specific bump type (interactive)
 npx @changesets/cli add --type major
 npx @changesets/cli add --type minor
 npx @changesets/cli add --type patch
+```
+
+#### Non-Interactive Generation (for automation)
+```bash
+# Generate changeset with custom message (non-interactive)
+npx @changesets/cli add --message "Add user authentication system
+
+- Implement login and logout components
+- Add JWT token management
+- Create authentication context
+- Update protected routes"
+
+# Generate changeset for specific package with message
+npx @changesets/cli add my-package --message "Update dependencies
+
+- Update React to latest version
+- Add new dev dependencies"
+
+# Generate patch changeset for all packages
+npx @changesets/cli add --message "Fix security vulnerabilities
+
+- Update vulnerable dependencies
+- Add security patches" --type patch
 ```
 
 ### 4. PR-Based Changesets
@@ -220,6 +244,46 @@ npx @changesets/cli add
 # - Which packages should have a changeset added? (package name)
 # - What kind of change is this? (major/minor/patch)
 # - Write a summary of the changes
+```
+
+### Automatic Package Detection
+For automated workflows, detect which packages have changes:
+
+```fish
+# Function to detect changed packages
+function detect_changed_packages
+    set changed_files (git diff --cached --name-only)
+
+    # Extract package names from changed files
+    set packages
+    for file in $changed_files
+        # Check if file is in a package directory
+        if string match -q "*/src/*" $file
+            set package_name (string replace -r '.*/src/([^/]+).*' '$1' $file)
+            if not contains $package_name $packages
+                set packages $packages $package_name
+            end
+        end
+    end
+
+    # If no specific packages found, use all packages or main package
+    if test (count $packages) -eq 0
+        set packages (string split ',' (grep -r '"name"' package.json | head -1 | string replace -r '.*"name"\s*:\s*"([^"]+)".*' '$1'))
+    end
+
+    echo $packages
+end
+```
+
+```bash
+# Use in automation
+CHANGED_PACKAGES=$(detect_changed_packages)
+if [ -n "$CHANGED_PACKAGES" ]; then
+  npx @changesets/cli add $CHANGED_PACKAGES --message "Update based on recent changes
+
+- Modified package files
+- Updated dependencies and configurations"
+fi
 ```
 
 ## Changeset Types and Standards
@@ -310,17 +374,48 @@ git push
 ### PR Integration
 Integrates seamlessly with `/pr-create` workflow:
 
+#### Non-Interactive PR Changeset Generation
 ```bash
-# The /pr-create command automatically detects changesets and runs:
-# npx @changesets/cli add
+# Generate changeset based on PR context (non-interactive)
+PR_TITLE=$(gh pr view --json title --jq '.title')
+PR_NUMBER=$(gh pr view --json number --jq '.number')
 
-# Then creates PR with reference to changeset
-gh pr create --title "feat: add user authentication system" --body "...
+npx @changesets/cli add --message "Update based on PR #$PR_NUMBER: $PR_TITLE
 
-🤖 Generated with <AI NAME>"
+- Implement changes from pull request
+- Address review feedback and requirements
+- Ensure compatibility with existing functionality"
+
+echo "✅ Changeset generated for PR #$PR_NUMBER"
 ```
 
-**Automatic Integration**: When using `/pr-create`, changeset generation happens automatically in Step 3 if changesets is detected in your repository.
+#### Automated Package Detection for PRs
+```bash
+# Detect changed packages from PR files
+PR_FILES=$(gh pr view $PR_NUMBER --json files --jq '.files[].path')
+CHANGED_PACKAGES=""
+
+for file in $PR_FILES; do
+  if [[ $file =~ ^src/([^/]+)/ ]]; then
+    package="${BASH_REMATCH[1]}"
+    if [[ ! $CHANGED_PACKAGES =~ $package ]]; then
+      CHANGED_PACKAGES="$CHANGED_PACKAGES $package"
+    fi
+  fi
+done
+
+# Generate changeset for detected packages
+if [ -n "$CHANGED_PACKAGES" ]; then
+  npx @changesets/cli add $CHANGED_PACKAGES --message "PR #$PR_NUMBER: $PR_TITLE
+
+Changes implemented in this pull request:
+- Modified package files
+- Updated functionality and features
+- Maintained backward compatibility"
+fi
+```
+
+**Automatic Integration**: When using `/pr-create`, changeset generation happens automatically in Step 3 using non-interactive methods if changesets is detected in your repository.
 
 ## Advanced Usage
 
@@ -435,6 +530,7 @@ jobs:
       - run: npx @changesets/cli status
 ```
 
+
 ### Version Publishing
 ```yaml
 # .github/workflows/release.yml
@@ -458,7 +554,7 @@ jobs:
 
 ## Examples
 
-### Feature Addition
+### Feature Addition (Interactive)
 ```bash
 # After implementing user authentication
 git add src/components/Auth/ src/hooks/useAuth.ts
@@ -470,6 +566,75 @@ npx @changesets/cli add --message "Add user authentication system
 - Update protected routes"
 
 git commit -m "feat: add user authentication system"
+```
+
+### Feature Addition (Non-Interactive)
+```bash
+# After implementing user authentication (automated workflow)
+git add src/components/Auth/ src/hooks/useAuth.ts
+
+# Generate changeset with commit message automatically
+COMMIT_MSG=$(git log --format=%B -n 1 | head -1)
+npx @changesets/cli add --message "Add user authentication system
+
+$COMMIT_MSG
+
+- Implement login and logout components
+- Add JWT token management
+- Create authentication context
+- Update protected routes"
+
+git commit -m "feat: add user authentication system"
+```
+
+### Complete PR Workflow with Changesets
+```bash
+# 1. Create feature branch and make changes
+git checkout -b feat/add-user-auth
+git add src/components/Auth/ src/hooks/useAuth.ts
+
+# 2. Generate changeset (non-interactive)
+if [ -d ".changeset" ]; then
+  COMMIT_MESSAGE=$(git log --format=%B -n 1 | head -1)
+  npx @changesets/cli add --message "Add user authentication system
+
+$COMMIT_MESSAGE
+
+- Implement login and logout components
+- Add JWT token management
+- Create authentication context
+- Update protected routes"
+fi
+
+# 3. Commit with conventional format
+git commit -m "feat: add user authentication system
+
+- Add login form component with validation
+- Implement JWT token handling and storage
+- Create auth context for global state management
+- Add protected route wrapper component
+
+Closes #123"
+
+# 4. Push and create PR
+git push -u origin feat/add-user-auth
+gh pr create --title "feat: add user authentication system" --body "...
+🤖 Generated with <AI NAME>"
+```
+
+### Package-Specific Changeset
+```bash
+# For monorepo with multiple packages
+git add src/auth-package/src/ src/ui-package/src/
+
+# Generate changeset for specific packages
+npx @changesets/cli add auth-package ui-package --message "Update authentication and UI components
+
+- Add new auth features in auth-package
+- Update UI components in ui-package
+- Maintain backward compatibility"
+
+git commit -m "feat: update auth and UI packages"
 ```
 
 ### Bug Fix
@@ -1800,10 +1965,15 @@ Names are defined as:
 - invalid
 - question
 - wontfix
+
+## Other Labels (additional ones defined for `shunkakinoki` repositories)
+
 - dependabot
 - renovate
 - dependencies
 - automerge
+- codex
+- refactor
 
 ## Label Mapping Rules
 
