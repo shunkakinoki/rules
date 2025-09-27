@@ -13,7 +13,7 @@ This command provides a standardized, comprehensive workflow for creating GitHub
 
 **CRITICAL RULE**: This command is STRICTLY for creating GitHub Pull Requests only. Creating new script files, executables, or automation tools that replicate or extend this functionality is EXPLICITLY PROHIBITED. All PR creation must go through the established `gh pr create` workflow documented here.
 
-Use this command when preparing a pull request. Follow each section before running `gh pr create`.
+Use this command when preparing a pull request. This is a **step-by-step workflow** - read each section and execute the commands in order before running `gh pr create`. You must run the changeset generation step (Step 3) as part of this workflow.
 
 ## Prerequisites
 
@@ -60,21 +60,18 @@ git branch --show-current
 
 For detailed changeset generation instructions, see the [`/changesets`](commands/changesets.md) command documentation.
 
+**Important**: You must manually execute the commands below as part of this workflow. Copy and run these commands in your terminal.
+
 ```bash
 # Check if repository uses changesets and generate changeset automatically
 if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
   echo "🔄 Generating changeset (see /changesets for detailed instructions)..."
-  npx @changesets/cli add --message "Update based on recent changes
-
-$(git log --format=%B -n 1 | head -1)
-
-- Modified source files and dependencies
-- Updated functionality and features
-- Maintained backward compatibility"
 else
   echo "ℹ️  No changesets setup detected - skipping changeset generation"
 fi
 ```
+
+Then, proceed to geenrate the changests through following the instructions on (commands/changets.md) to add proper code changes documentation.
 
 ### Step 4: Commit Changes
 ```bash
@@ -363,6 +360,7 @@ git add src/components/Auth/ src/utils/auth.ts
 git status
 
 # 3. Generate changeset (if changesets is configured)
+#    IMPORTANT: You must manually run these commands in your terminal
 if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
   echo "🔄 Generating changeset (see /changesets for detailed instructions)..."
   npx @changesets/cli add --message "Update based on recent changes
@@ -372,6 +370,7 @@ $(git log --format=%B -n 1 | head -1)
 - Modified source files and dependencies
 - Updated functionality and features
 - Maintained backward compatibility"
+  echo "✅ Changeset generated successfully"
 fi
 
 # 4. Commit with conventional format with no co-authorship
