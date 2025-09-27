@@ -11,8 +11,12 @@ COMMANDS_TARGET_DIRS := $(HOME)/.cursor/commands $(HOME)/.claude/commands $(HOME
 # COMMANDS
 # ====================================================================================
 
-.PHONY: sync-commands
-sync-commands: ## Sync project commands to assistant-specific directories.
+.PHONY: prepare
+prepare: ## Prepare the project for development.
+	@make commands-copy
+
+.PHONY: commands-sync
+commands-sync: ## Sync project commands to assistant-specific directories.
 	@for target in $(COMMANDS_TARGET_DIRS); do \
 		if mkdir -p $$target && rsync -a --delete $(COMMANDS_SRC_DIR)/ $$target/; then \
 			echo "Synced $(COMMANDS_SRC_DIR) → $$target"; \
