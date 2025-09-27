@@ -1637,7 +1637,7 @@ gh pr create \
 - Manual testing completed on all major browsers
 - No breaking changes to existing functionality
 
-🤖 Generated with <AI NAME>" \
+🤖 Generated with <AI_TOOL> on <AI_MODEL>" \
   --base main \
   --head feature-branch-name
 ```
@@ -1696,7 +1696,7 @@ gh pr create \
 - Manual testing completed on all major browsers
 - No breaking changes to existing functionality
 
-🤖 Generated with <AI NAME>" \
+🤖 Generated with <AI_TOOL> on <AI_MODEL>" \
   --base main \
   --head feature-branch-name
 ```
@@ -1754,11 +1754,11 @@ gh pr merge <pr-number> --auto-merge disable
 - **Changes Made**: Bullet list of what was modified
 - **Technical Details**: Implementation specifics and rationale
 - **Testing**: Verification steps and pre-commit status
-- **AI Attribution**: `🤖 Generated with <AI NAME>` (current assistant)
+- **AI Attribution**: `🤖 Generated with <AI_TOOL> on <AI_MODEL>` (current assistant)
 
 ### AI Attribution Guidelines
-- **Current assistant**: Replace `<AI NAME>` with your AI assistant name
-- **Format**: `🤖 Generated with <AI NAME>` (no co-authorship)
+- **Current assistant**: Replace `<AI_TOOL>` with your AI tool name (e.g., Cursor, VS Code with Copilot, JetBrains AI) and `<AI_MODEL>` with your AI model name (e.g., Claude, GPT-4)
+- **Format**: `🤖 Generated with <AI_TOOL> on <AI_MODEL>` (no co-authorship)
 - **Placement**: At the end of PR description
 - **Consistency**: Use same attribution across all generated content
 
@@ -1820,7 +1820,7 @@ gh pr close <number>
 ### Commit Guidelines
 - **Solo-authored commits only** - DO NOT include co-authorship in commit messages
 - **NO co-authorship** - Never add "Co-Authored-By: Claude" or similar co-authorship attribution in commits
-- **AI name belongs in PR description only** - Use `🤖 Generated with <AI NAME>` format in PR body, not commit messages
+- **AI name belongs in PR description only** - Use `🤖 Generated with <AI_TOOL> on <AI_MODEL>` format in PR body, not commit messages
 - **Use present tense** in commit messages ("Add feature" not "Added feature")
 - **Keep commits atomic** and focused on single changes
 - **Reference issues** when applicable (`Closes #123`, `Fixes #456`)
@@ -1916,7 +1916,7 @@ gh pr create \
 - Manual testing completed for login/logout flows
 - Verified compatibility with existing user management
 
-🤖 Generated with <AI NAME>" \
+🤖 Generated with <AI_TOOL> on <AI_MODEL>" \
   --base main \
   --head feat-add-user-auth
 
