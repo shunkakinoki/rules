@@ -613,7 +613,7 @@ Closes #123"
 # 4. Push and create PR
 git push -u origin feat/add-user-auth
 gh pr create --title "feat: add user authentication system" --body "...
-🤖 Generated with <AI NAME>"
+🤖 Generated with <AI TOOL> by <AI MODEL>"
 ```
 
 ### Package-Specific Changeset

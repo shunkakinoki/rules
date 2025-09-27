@@ -57,15 +57,20 @@ git branch --show-current
 ```
 
 ### Step 3: Generate Changeset (if applicable)
+
+For detailed changeset generation instructions, see the [`/changesets`](commands/changesets.md) command documentation.
+
 ```bash
 # Check if repository uses changesets and generate changeset automatically
 if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
-  echo "🔄 Changesets detected - generating changeset entry..."
+  echo "🔄 Generating changeset (see /changesets for detailed instructions)..."
+  npx @changesets/cli add --message "Update based on recent changes
 
-  # Generate changeset based on current changes
-  npx @changesets/cli add
+$(git log --format=%B -n 1 | head -1)
 
-  echo "✅ Changeset generated successfully"
+- Modified source files and dependencies
+- Updated functionality and features
+- Maintained backward compatibility"
 else
   echo "ℹ️  No changesets setup detected - skipping changeset generation"
 fi
@@ -118,7 +123,7 @@ gh pr create \
 - Manual testing completed on all major browsers
 - No breaking changes to existing functionality
 
-🤖 Generated with <AI_TOOL> on <AI_MODEL>" \
+🤖 Generated with <AI_TOOL> by <AI_MODEL>" \
   --base main \
   --head feature-branch-name
 ```
@@ -177,7 +182,7 @@ gh pr create \
 - Manual testing completed on all major browsers
 - No breaking changes to existing functionality
 
-🤖 Generated with <AI_TOOL> on <AI_MODEL>" \
+🤖 Generated with <AI_TOOL> by <AI_MODEL>" \
   --base main \
   --head feature-branch-name
 ```
@@ -235,11 +240,11 @@ gh pr merge <pr-number> --auto-merge disable
 - **Changes Made**: Bullet list of what was modified
 - **Technical Details**: Implementation specifics and rationale
 - **Testing**: Verification steps and pre-commit status
-- **AI Attribution**: `🤖 Generated with <AI_TOOL> on <AI_MODEL>` (current assistant)
+- **AI Attribution**: `🤖 Generated with <AI_TOOL> by <AI_MODEL>` (current assistant)
 
 ### AI Attribution Guidelines
 - **Current assistant**: Replace `<AI_TOOL>` with your AI tool name (e.g., Cursor, VS Code with Copilot, JetBrains AI) and `<AI_MODEL>` with your AI model name (e.g., Claude, GPT-4)
-- **Format**: `🤖 Generated with <AI_TOOL> on <AI_MODEL>` (no co-authorship)
+- **Format**: `🤖 Generated with <AI_TOOL> by <AI_MODEL>` (no co-authorship)
 - **Placement**: At the end of PR description
 - **Consistency**: Use same attribution across all generated content
 
@@ -301,7 +306,7 @@ gh pr close <number>
 ### Commit Guidelines
 - **Solo-authored commits only** - DO NOT include co-authorship in commit messages
 - **NO co-authorship** - Never add "Co-Authored-By: Claude" or similar co-authorship attribution in commits
-- **AI name belongs in PR description only** - Use `🤖 Generated with <AI_TOOL> on <AI_MODEL>` format in PR body, not commit messages
+- **AI name belongs in PR description only** - Use `🤖 Generated with <AI_TOOL> by <AI_MODEL>` format in PR body, not commit messages
 - **Use present tense** in commit messages ("Add feature" not "Added feature")
 - **Keep commits atomic** and focused on single changes
 - **Reference issues** when applicable (`Closes #123`, `Fixes #456`)
@@ -359,8 +364,14 @@ git status
 
 # 3. Generate changeset (if changesets is configured)
 if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
-  echo "🔄 Generating changeset..."
-  npx @changesets/cli add
+  echo "🔄 Generating changeset (see /changesets for detailed instructions)..."
+  npx @changesets/cli add --message "Update based on recent changes
+
+$(git log --format=%B -n 1 | head -1)
+
+- Modified source files and dependencies
+- Updated functionality and features
+- Maintained backward compatibility"
 fi
 
 # 4. Commit with conventional format with no co-authorship
@@ -397,7 +408,7 @@ gh pr create \
 - Manual testing completed for login/logout flows
 - Verified compatibility with existing user management
 
-🤖 Generated with <AI_TOOL> on <AI_MODEL>" \
+🤖 Generated with <AI_TOOL> by <AI_MODEL>" \
   --base main \
   --head feat-add-user-auth
 
