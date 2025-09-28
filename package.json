@@ -11,7 +11,7 @@
     "lefthook:install": "lefthook install",
     "lefthook:uninstall": "lefthook uninstall",
     "lefthook:run": "lefthook run",
-    "commands:copy": "cp commands/*.md .ruler/"
+    "prepare": "make prepare"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.5",

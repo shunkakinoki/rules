@@ -5,14 +5,18 @@
 # ====================================================================================
 
 COMMANDS_SRC_DIR := $(dir $(lastword $(MAKEFILE_LIST)))commands
-COMMANDS_TARGET_DIRS := $(HOME)/.cursor/commands $(HOME)/.claude/commands $(HOME)/.codex/prompts $(HOME)/.config/opencode/command/
+COMMANDS_TARGET_DIRS := $(HOME)/.cursor/commands $(HOME)/.claude/commands $(HOME)/.codex/prompts $(HOME)/.config/opencode/command $(HOME)/.config/amp/commands $(HOME)/.kilocode/workflows $(HOME)/Documents/Cline/Rules
 
 # ====================================================================================
 # COMMANDS
 # ====================================================================================
 
-.PHONY: sync-commands
-sync-commands: ## Sync project commands to assistant-specific directories.
+.PHONY: prepare
+prepare: ## Prepare the project for development.
+	@make commands-copy
+
+.PHONY: commands-sync
+commands-sync: ## Sync project commands to assistant-specific directories.
 	@for target in $(COMMANDS_TARGET_DIRS); do \
 		if mkdir -p $$target && rsync -a --delete $(COMMANDS_SRC_DIR)/ $$target/; then \
 			echo "Synced $(COMMANDS_SRC_DIR) → $$target"; \
@@ -21,6 +25,10 @@ sync-commands: ## Sync project commands to assistant-specific directories.
 			exit 1; \
 		fi; \
 	done
+
+.PHONY: commands-copy
+commands-copy: ## Copy commands to .ruler directory.
+	@cp $(COMMANDS_SRC_DIR)/*.md .ruler/
 
 # ====================================================================================
 # HELP

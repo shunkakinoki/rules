@@ -18,6 +18,8 @@ jobs:
         uses: actions/checkout@v5
       - name: Setup Bun
         uses: shunkakinoki/actions/.github/actions/setup-bun@156beb8dbd9b84135a994da9ea77398d91e33df6
+      - name: Prepare
+        run: bun run prepare
       - name: Check
         run: bun run check
       - name: Format
