@@ -60,18 +60,15 @@ git branch --show-current
 
 For detailed changeset generation instructions, see the [`/changesets`](commands/changesets.md) command documentation.
 
-**Important**: You must manually execute the commands below as part of this workflow. Copy and run these commands in your terminal.
+**Important**: Use the LLM-tailored changeset generation approach described in `/changesets` to create properly formatted changeset entries that follow the established patterns and conventions. This ensures consistent release documentation that aligns with the project's standards.
 
-```bash
-# Check if repository uses changesets and generate changeset automatically
-if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
-  echo "🔄 Generating changeset (see /changesets for detailed instructions)..."
-else
-  echo "ℹ️  No changesets setup detected - skipping changeset generation"
-fi
-```
+The changeset generation process uses structured prompting to create entries that:
+- Follow Changesets front-matter semantics
+- Include appropriate version bump levels (major/minor/patch)
+- Focus on user-visible impact rather than implementation details
+- Maintain consistency with existing release documentation patterns
 
-Then, proceed to geenrate the changests through following the instructions on (commands/changets.md) to add proper code changes documentation.
+After generating the changeset entry, commit it alongside your code changes.
 
 ### Step 4: Commit Changes
 ```bash
@@ -360,18 +357,9 @@ git add src/components/Auth/ src/utils/auth.ts
 git status
 
 # 3. Generate changeset (if changesets is configured)
-#    IMPORTANT: You must manually run these commands in your terminal
-if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
-  echo "🔄 Generating changeset (see /changesets for detailed instructions)..."
-  npx @changesets/cli add --message "Update based on recent changes
-
-$(git log --format=%B -n 1 | head -1)
-
-- Modified source files and dependencies
-- Updated functionality and features
-- Maintained backward compatibility"
-  echo "✅ Changeset generated successfully"
-fi
+#    Use LLM-tailored changeset generation (see /changesets for detailed instructions)
+#    Generate changeset entry using the structured prompting approach described in /changesets
+#    This creates properly formatted entries that follow project conventions
 
 # 4. Commit with conventional format with no co-authorship
 git commit -m "feat: implement user authentication system

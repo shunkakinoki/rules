@@ -13,7 +13,7 @@ This command provides a standardized, comprehensive workflow for creating GitHub
 
 **CRITICAL RULE**: This command is STRICTLY for creating GitHub Pull Requests only. Creating new script files, executables, or automation tools that replicate or extend this functionality is EXPLICITLY PROHIBITED. All PR creation must go through the established `gh pr create` workflow documented here.
 
-Use this command when preparing a pull request. Follow each section before running `gh pr create`.
+Use this command when preparing a pull request. This is a **step-by-step workflow** - read each section and execute the commands in order before running `gh pr create`. You must run the changeset generation step (Step 3) as part of this workflow.
 
 ## Prerequisites
 
@@ -57,19 +57,18 @@ git branch --show-current
 ```
 
 ### Step 3: Generate Changeset (if applicable)
-```bash
-# Check if repository uses changesets and generate changeset automatically
-if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
-  echo "🔄 Changesets detected - generating changeset entry..."
 
-  # Generate changeset based on current changes
-  npx @changesets/cli add
+For detailed changeset generation instructions, see the [`/changesets`](commands/changesets.md) command documentation.
 
-  echo "✅ Changeset generated successfully"
-else
-  echo "ℹ️  No changesets setup detected - skipping changeset generation"
-fi
-```
+**Important**: Use the LLM-tailored changeset generation approach described in `/changesets` to create properly formatted changeset entries that follow the established patterns and conventions. This ensures consistent release documentation that aligns with the project's standards.
+
+The changeset generation process uses structured prompting to create entries that:
+- Follow Changesets front-matter semantics
+- Include appropriate version bump levels (major/minor/patch)
+- Focus on user-visible impact rather than implementation details
+- Maintain consistency with existing release documentation patterns
+
+After generating the changeset entry, commit it alongside your code changes.
 
 ### Step 4: Commit Changes
 ```bash
@@ -118,7 +117,7 @@ gh pr create \
 - Manual testing completed on all major browsers
 - No breaking changes to existing functionality
 
-🤖 Generated with <AI_TOOL> on <AI_MODEL>" \
+🤖 Generated with <AI_TOOL> by <AI_MODEL>" \
   --base main \
   --head feature-branch-name
 ```
@@ -177,7 +176,7 @@ gh pr create \
 - Manual testing completed on all major browsers
 - No breaking changes to existing functionality
 
-🤖 Generated with <AI_TOOL> on <AI_MODEL>" \
+🤖 Generated with <AI_TOOL> by <AI_MODEL>" \
   --base main \
   --head feature-branch-name
 ```
@@ -235,11 +234,11 @@ gh pr merge <pr-number> --auto-merge disable
 - **Changes Made**: Bullet list of what was modified
 - **Technical Details**: Implementation specifics and rationale
 - **Testing**: Verification steps and pre-commit status
-- **AI Attribution**: `🤖 Generated with <AI_TOOL> on <AI_MODEL>` (current assistant)
+- **AI Attribution**: `🤖 Generated with <AI_TOOL> by <AI_MODEL>` (current assistant)
 
 ### AI Attribution Guidelines
 - **Current assistant**: Replace `<AI_TOOL>` with your AI tool name (e.g., Cursor, VS Code with Copilot, JetBrains AI) and `<AI_MODEL>` with your AI model name (e.g., Claude, GPT-4)
-- **Format**: `🤖 Generated with <AI_TOOL> on <AI_MODEL>` (no co-authorship)
+- **Format**: `🤖 Generated with <AI_TOOL> by <AI_MODEL>` (no co-authorship)
 - **Placement**: At the end of PR description
 - **Consistency**: Use same attribution across all generated content
 
@@ -301,7 +300,7 @@ gh pr close <number>
 ### Commit Guidelines
 - **Solo-authored commits only** - DO NOT include co-authorship in commit messages
 - **NO co-authorship** - Never add "Co-Authored-By: Claude" or similar co-authorship attribution in commits
-- **AI name belongs in PR description only** - Use `🤖 Generated with <AI_TOOL> on <AI_MODEL>` format in PR body, not commit messages
+- **AI name belongs in PR description only** - Use `🤖 Generated with <AI_TOOL> by <AI_MODEL>` format in PR body, not commit messages
 - **Use present tense** in commit messages ("Add feature" not "Added feature")
 - **Keep commits atomic** and focused on single changes
 - **Reference issues** when applicable (`Closes #123`, `Fixes #456`)
@@ -358,10 +357,9 @@ git add src/components/Auth/ src/utils/auth.ts
 git status
 
 # 3. Generate changeset (if changesets is configured)
-if [ -d ".changeset" ] || grep -q "@changesets/cli" package.json 2>/dev/null || [ -f ".changeset/config.json" ]; then
-  echo "🔄 Generating changeset..."
-  npx @changesets/cli add
-fi
+#    Use LLM-tailored changeset generation (see /changesets for detailed instructions)
+#    Generate changeset entry using the structured prompting approach described in /changesets
+#    This creates properly formatted entries that follow project conventions
 
 # 4. Commit with conventional format with no co-authorship
 git commit -m "feat: implement user authentication system
@@ -397,7 +395,7 @@ gh pr create \
 - Manual testing completed for login/logout flows
 - Verified compatibility with existing user management
 
-🤖 Generated with <AI_TOOL> on <AI_MODEL>" \
+🤖 Generated with <AI_TOOL> by <AI_MODEL>" \
   --base main \
   --head feat-add-user-auth
 
